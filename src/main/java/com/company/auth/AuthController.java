@@ -4,11 +4,13 @@ package com.company.auth;
 import com.company.auth.dto.AuthDto;
 import com.company.auth.dto.RegisterDto;
 import com.company.auth.dto.VerifyDto;
-import com.company.smpt.*;
 import jakarta.annotation.security.PermitAll;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -34,7 +36,5 @@ public class AuthController {
     public ResponseEntity<AuthResp> login(@RequestBody AuthDto authDto) {
         return authService.login(authDto);
     }
-
-
 
 }

@@ -4,11 +4,9 @@ import com.company.auth.dto.AuthDto;
 import com.company.auth.dto.RegisterDto;
 import com.company.auth.dto.VerifyDto;
 import com.company.exception.InvalidPasswordOrUsernameException;
-import com.company.exception.ItemNotFoundException;
 import com.company.security.jwtUtil;
 import com.company.smpt.SmptService;
 import com.company.smpt.Sms;
-import com.company.user.Role;
 import com.company.user.User;
 import com.company.user.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,14 +15,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class AuthService {
-    private Map<String, Integer> verificationCodes = new HashMap<>();
+    private final Map<String, Integer> verificationCodes = new HashMap<>();
     private RegisterDto registerDto;
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -34,33 +31,32 @@ public class AuthService {
         Integer savedCode = verificationCodes.get(verifyDto.getEmail());
         if (savedCode == null) {
             return ResponseEntity.badRequest()
-                    .body("Code not found");
+                    .body("Email or code is incorrect!");
         }
-        if (!savedCode.toString().equals(verifyDto.getCode().toString())) {
+        if (!savedCode.toString().equals(verifyDto.getCode())) {
             return ResponseEntity.badRequest()
-                    .body("Your code is incorrect!");
+                    .body("Email or code is incorrect!");
         }
 
         User user = User.builder()
                 .name(registerDto.getName())
-                .role(Role.USER)
-                .gmail(registerDto.getGmail())
-                .password(bCryptPasswordEncoder.encode(registerDto.getPassword()))
+                .email(verifyDto.getEmail())
                 .build();
 
-        User saved = userRepository.save(user);
+        User savedUser = userRepository.save(user);
         verificationCodes.remove(verifyDto.getEmail());
 
         return ResponseEntity.ok(new AuthResp(
-                saved.getGmail(),
-                jwtUtil.encode(saved.getGmail(), saved.getRole())
+                savedUser.getEmail(),
+                jwtUtil.encode(savedUser.getEmail(), savedUser.getRole())
         ));
     }
 
     public ResponseEntity<?> register(RegisterDto registerDto) {
         Optional<User> optionalUser = userRepository
-                .findByGmail(registerDto.getGmail());
-        if (optionalUser.isPresent()) return ResponseEntity.status(400).body("Item Already Exists!!!");
+                .findByEmailOrUsername(registerDto.getGmail(), registerDto.getUsername());
+        if (optionalUser.isPresent())
+            return ResponseEntity.status(400).body("It seems to user already exists please login and comeback.");
         else {
             try {
                 this.registerDto = registerDto;
@@ -74,8 +70,8 @@ public class AuthService {
                 return ResponseEntity.ok("Verification code sent to your email. " +
                         "Tap to this link to verify: http://localhost:8080/api/v1/auth/verify");
             } catch (Exception e) {
-                e.printStackTrace();
-                return ResponseEntity.status(400).body("Please try again later.");
+                System.out.println(e.getMessage());
+                return ResponseEntity.status(400).body("Something went wrong please try again later.");
             }
         }
     }
@@ -89,27 +85,25 @@ public class AuthService {
     }
     public ResponseEntity<AuthResp> login(AuthDto authDto) {
 
-        User user =  getByUsername(authDto.getGmail());
+        User user = getByEmail(authDto.getGmail());
 
-        if (user.getGmail().equals(authDto.getGmail()) &&
+        if (user.getEmail().equals(authDto.getGmail()) &&
         bCryptPasswordEncoder.matches(authDto.getPassword(), (user.getPassword()))) {
 
             return ResponseEntity.ok(
                     new AuthResp(
-                            user.getGmail(),
-                            jwtUtil.encode(user.getGmail(), user.getRole())
+                            user.getEmail(),
+                            jwtUtil.encode(user.getEmail(), user.getRole())
                     )
             );
 
         }
-
         throw new InvalidPasswordOrUsernameException("Invalid password or username.");
-
     }
 
-    private User getByUsername(String username) {
+    private User getByEmail(String username) {
         return userRepository
-                .findByGmail(username)
+                .findByEmail(username)
                 .orElseThrow();
     }
 
