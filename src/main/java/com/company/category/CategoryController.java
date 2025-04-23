@@ -15,12 +15,12 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @PostMapping("/create")
-    public ResponseEntity<String> CategoryCreate(@RequestBody CategoryEntity category) {
-        return ResponseEntity.ok(categoryService.CategoryCreate(category));
+    public ResponseEntity<?> CategoryCreate(@RequestBody CategoryEntity category) {
+        return ResponseEntity.ok(categoryService.categoryCreate(category));
     }
 
     @GetMapping("/get-all")
-    public ResponseEntity<String> getAllCategories() {
+    public ResponseEntity<?> getAllCategories() {
         return ResponseEntity.ok(categoryService.getAllCategories());
 
     }
@@ -28,7 +28,7 @@ public class CategoryController {
     public ResponseEntity<CategoryEntity> update(
             @PathVariable UUID id,
             @RequestBody CategoryEntity updated) {
-        return categoryService.categoryUptade(id,updated);
+        return categoryService.categoryUpdate(id,updated);
     }
 
     @DeleteMapping("/delete/{id}")

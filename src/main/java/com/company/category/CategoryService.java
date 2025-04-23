@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -13,15 +14,19 @@ import java.util.UUID;
 public class CategoryService {
     private final CategoryRepository categoryRepository;
 
-    public String CategoryCreate(CategoryEntity category) {
-        return categoryRepository.save(category).toString();
+    public CategoryEntity categoryCreate(CategoryEntity category) {
+        Optional<CategoryEntity> findByName = categoryRepository.findByName(category.getName());
+        if (findByName.isPresent()) {
+            throw new RuntimeException("Category with this name already exists");
+        }
+        return categoryRepository.save(category);
     }
 
-    public String getAllCategories() {
-        return categoryRepository.findAll().toString();
+    public List<CategoryEntity> getAllCategories() {
+        return categoryRepository.findAll();
     }
 
-    public ResponseEntity<CategoryEntity> categoryUptade(UUID id, CategoryEntity updated) {
+    public ResponseEntity<CategoryEntity> categoryUpdate(UUID id, CategoryEntity updated) {
         Optional<CategoryEntity> category = categoryRepository.findById(id);
         if (category.isPresent()) {
             CategoryEntity categoryEntity = category.get();
