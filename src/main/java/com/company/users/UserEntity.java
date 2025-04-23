@@ -27,6 +27,11 @@ public class UserEntity extends BaseMapper {
     @Column(unique = true, nullable = false)
     private String email;
 
+    public UserEntity(String fullName, String email) {
+        this.fullName = fullName;
+        this.email = email;
+    }
+
     @Enumerated(value = EnumType.STRING)
     private Status status;
 
