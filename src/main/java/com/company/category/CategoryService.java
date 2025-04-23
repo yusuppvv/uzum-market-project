@@ -37,7 +37,12 @@ public class CategoryService {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    public void delete(UUID id) {
-        categoryRepository.deleteById(id);
+    public String delete(UUID id) {
+        Optional<CategoryEntity> findById = categoryRepository.findById(id);
+        if (findById.isPresent()) {
+            categoryRepository.deleteById(id);
+            return "Successfully deleted";
+        }
+        else return "Category with this id does not exist";
     }
 }

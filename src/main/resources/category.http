@@ -10,13 +10,12 @@ GET localhost:8080/api/v1/category/get-all
 
 
 ###
-PUT localhost:8080/api/v1/category/uptade/1
+PUT localhost:8080/api/v1/category/uptade/72070588-392c-4ad6-a9c7-958e94b549d7
 Content-Type: application/json
 
 {
-  "id": "2",
   "name": "Clothes"
 }
 
 ###
-DELETE localhost:8080/api/v1/category/delete/2
+DELETE localhost:8080/api/v1/category/delete/72070588-392c-4ad6-a9c7-958e94b549d7
