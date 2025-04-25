@@ -1,11 +1,8 @@
 package com.company.product;
 
-import com.company.delivery.Status;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.UUID;
 
@@ -26,11 +23,18 @@ public class ProductServise {
     }
 
 
-    public String uptadeProduct(UUID id, ProductEntity product) {
-        ProductEntity existing =
+    public ResponseEntity<ProductEntity> uptadeProduct(UUID id, ProductEntity product) {
+        ProductEntity existing = getById(id);
+        existing.setDescription(product.getDescription());
+        existing.setPrice(product.getPrice());
+        return ResponseEntity.ok(productRepository.save(existing));
+    }
+
+    private ProductEntity getById(UUID id) {
+      return productRepository.findById(id).orElse(null);
     }
 
     public String deleteById(UUID id) {
-        return null;
+        return deleteById(id);
     }
 }
