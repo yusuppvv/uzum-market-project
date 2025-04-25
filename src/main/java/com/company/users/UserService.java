@@ -1,5 +1,6 @@
 package com.company.users;
 
+import com.company.exception.AppBadRequestException;
 import com.company.users.dto.UserCreationDto;
 import com.company.users.dto.UserResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -15,44 +16,40 @@ import java.util.UUID;
 public class UserService {
     private final UserRepository userRepository;
 
-    public ResponseEntity<?> create(UserCreationDto userCreationDto) {
+    public ResponseEntity<UserResponseDto> create(UserCreationDto userCreationDto) {
         Optional<UserEntity> optionalUser = userRepository.findByFullNameOrEmail(userCreationDto.getFullName(), userCreationDto.getEmail());
         if (optionalUser.isPresent()) {
-            return ResponseEntity.badRequest().body("User already exists");
+            throw new AppBadRequestException("User already exists");
         }
         else {
-            return ResponseEntity.ok(userRepository.save(new UserEntity
-                     (userCreationDto.getFullName(), userCreationDto.getEmail()))
-            );
+            UserEntity save = userRepository.save(new UserEntity(userCreationDto.getFullName(), userCreationDto.getEmail()));
+            return ResponseEntity.ok(new UserResponseDto(save.getId(), save.getFullName(), save.getEmail()));
         }
     }
 
-    public ResponseEntity<?> getAll() {
-        Optional<List<UserEntity>> userList = Optional.of(userRepository.findAll());
-        if (userList.isPresent()) {
-            return ResponseEntity.ok(userList);
-        }
-        else return ResponseEntity.badRequest().body("No users found");
+    public List<UserResponseDto> getAll() {
+        return userRepository.findAllByVisibilityIsTrue()
+                .stream().map(e -> new UserResponseDto(e.getId(), e.getFullName(), e.getEmail())).toList();
     }
 
-    public ResponseEntity<?> update(UUID id, UserCreationDto userCreationDto) {
-        Optional<UserEntity> byId = userRepository.findById(id);
+    public UserResponseDto update(UUID id, UserCreationDto userCreationDto) {
+        Optional<UserEntity> byId = userRepository.findByIdAndVisibilityIsTrue(id);
         if (byId.isPresent()) {
             UserEntity userEntity = byId.get();
             userEntity.setFullName(userCreationDto.getFullName());
             userEntity.setEmail(userCreationDto.getEmail());
             userRepository.save(userEntity);
-            return ResponseEntity.ok(userEntity);
+            return new UserResponseDto(userEntity.getId(), userEntity.getFullName(), userEntity.getEmail());
         }
-        else return ResponseEntity.badRequest().body("User not found by this id.");
+        else throw new AppBadRequestException("User not found by this id.");
     }
 
-    public ResponseEntity<?> delete(UUID id) {
-        Optional<UserEntity> byId = userRepository.findById(id);
+    public String delete(UUID id) {
+        Optional<UserEntity> byId = userRepository.findByIdAndVisibilityIsTrue(id);
         if (byId.isPresent()) {
-            userRepository.deleteById(byId.get().getId());
-            return ResponseEntity.ok("User deleted successfully");
+            byId.get().setVisibility(false);
+            return "User deleted successfully";
         }
-        else return ResponseEntity.badRequest().body("User not found by this id.");
+        else return "User not found by this id.";
     }
 }
