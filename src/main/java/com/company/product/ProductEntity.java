@@ -26,7 +26,7 @@ public class ProductEntity extends BaseMapper {
     //nullable false
     private String title;
     private String description;
-    private BigDecimal price;
+    private double price;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id",
@@ -54,5 +54,11 @@ public class ProductEntity extends BaseMapper {
 
     @OneToMany(mappedBy = "product")
     private List<ReviewEntity> reviews;
+
+    public ProductEntity(String title, String description, double price) {
+        this.title = title;
+        this.description = description;
+        this.price = price;
+    }
 
 }

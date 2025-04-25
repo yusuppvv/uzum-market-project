@@ -1,10 +1,12 @@
 package com.company.product;
 
+import com.company.product.dto.ProductCreationDto;
+import com.company.product.dto.ProductResponseDto;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.id.uuid.UuidGenerator;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -12,25 +14,26 @@ import java.util.UUID;
 @RequestMapping("/api/v1/product")
 public class ProductController {
 
-    private final ProductServise productServise;
+    private final ProductService productService;
 
     @PostMapping
-    public ResponseEntity<?> postProduct(ProductEntity product) {
-        return ResponseEntity.ok(productServise.createPorduct(product));
+    public ResponseEntity<ProductResponseDto> create(@RequestBody ProductCreationDto productCreationDto) {
+        return ResponseEntity.ok(productService.createProduct(productCreationDto));
     }
 
     @GetMapping("/get-all")
-    public ResponseEntity<?> getallProduct() {
-        return productServise.getAllProduct();
+    public ResponseEntity<List<ProductResponseDto>> getAllProduct() {
+        return ResponseEntity.ok(productService.getAllProduct());
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> uptadeProduct(@PathVariable UUID id, @RequestBody ProductEntity product) {
-        return ResponseEntity.ok(productServise.uptadeProduct(id ,product));
+    public ResponseEntity<ProductResponseDto> updateProduct(@PathVariable UUID id,
+                                                            @RequestBody ProductCreationDto product) {
+        return ResponseEntity.ok(productService.updateProduct(id ,product));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(UUID id) {
-        return ResponseEntity.ok(productServise.deleteById(id));
+    public ResponseEntity<String> delete(@PathVariable UUID id) {
+        return ResponseEntity.ok(productService.deleteById(id));
     }
 }
