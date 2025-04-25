@@ -1,7 +1,10 @@
 package com.company.category;
 
+import com.company.category.DTO.CategoryCr;
+import com.company.category.DTO.CategoryResp;
+import com.company.exception.AppBadRequestException;
+import com.company.exception.ItemNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -12,37 +15,90 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class CategoryService {
+
     private final CategoryRepository categoryRepository;
 
-    public CategoryEntity categoryCreate(CategoryEntity category) {
-        Optional<CategoryEntity> findByName = categoryRepository.findByName(category.getName());
-        if (findByName.isPresent()) {
-            throw new RuntimeException("Category with this name already exists");
+    public ResponseEntity<CategoryResp> create(CategoryCr categoryCr) {
+
+        Optional<CategoryEntity> optionalCategory = categoryRepository
+                .findByNameAndVisibilityTrue(categoryCr.getName());
+
+        if (optionalCategory.isPresent()) {
+            throw new AppBadRequestException("Category Already Exists!!!");
         }
-        return categoryRepository.save(category);
+
+        CategoryEntity saved = categoryRepository.save(CategoryEntity
+                .builder()
+                .name(categoryCr.getName())
+                .build());
+
+        return ResponseEntity.ok(
+                toDTO(saved)
+        );
     }
 
-    public List<CategoryEntity> getAllCategories() {
-        return categoryRepository.findAll();
+    public ResponseEntity<CategoryResp> getById(UUID id) {
+
+        CategoryEntity categoryEntity = getCategoryEntityById(id);
+
+        return ResponseEntity.ok(toDTO(categoryEntity));
     }
 
-    public ResponseEntity<CategoryEntity> categoryUpdate(UUID id, CategoryEntity updated) {
-        Optional<CategoryEntity> category = categoryRepository.findById(id);
-        if (category.isPresent()) {
-            CategoryEntity categoryEntity = category.get();
-            categoryEntity.setName(updated.getName());
-            categoryRepository.save(categoryEntity);
-            return new ResponseEntity<>(categoryEntity, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public ResponseEntity<List<CategoryResp>> getAll() {
+        return ResponseEntity.ok(
+                categoryRepository
+                        .findAllByVisibilityTrue()
+                        .stream()
+                        .map(this::toDTO)
+                        .toList()
+        );
+
     }
 
-    public String delete(UUID id) {
-        Optional<CategoryEntity> findById = categoryRepository.findById(id);
-        if (findById.isPresent()) {
-            categoryRepository.deleteById(id);
-            return "Successfully deleted";
+
+    public ResponseEntity<CategoryResp> update(UUID id, CategoryCr categoryCr) {
+
+        CategoryEntity categoryEntity = getCategoryEntityById(id);
+
+        Optional<CategoryEntity> byNameAndVisibilityTrue = categoryRepository
+                .findByNameAndVisibilityTrue(categoryCr.getName());
+
+        if (byNameAndVisibilityTrue.isPresent()) {
+            throw  new AppBadRequestException("Item Already Exisits!!!");
         }
-        else return "Category with this id does not exist";
+
+        categoryEntity.setName(categoryCr.getName());
+
+        CategoryEntity saved = categoryRepository.save(categoryEntity);
+
+        return ResponseEntity.ok(toDTO(saved));
+    }
+
+    public ResponseEntity<String> delete(UUID id) {
+
+        CategoryEntity categoryEntity = categoryRepository
+                .findByIdAndVisibilityTrue(id)
+                .orElseThrow();
+
+        categoryEntity.setVisibility(false);
+
+
+        categoryRepository.save(categoryEntity);
+
+        return ResponseEntity.ok("Deleted");
+    }
+
+    private CategoryResp toDTO(CategoryEntity categoryEntity) {
+        return CategoryResp
+                .builder()
+                .id(categoryEntity.getId())
+                .name(categoryEntity.getName())
+                .build();
+    }
+
+    private CategoryEntity getCategoryEntityById(UUID id) {
+        return categoryRepository
+                .findByIdAndVisibilityTrue(id)
+                .orElseThrow();
     }
 }

@@ -16,7 +16,7 @@ Content-Type: application/json
 {
   "fullName": "Behruz",
   "email": "example@gamil.com"
-}
+}   
 
 ###
 DELETE localhost:8080/api/v1/users/delete-by-id/a56000aa-fbe8-4f68-9cb7-3629dba37d11
