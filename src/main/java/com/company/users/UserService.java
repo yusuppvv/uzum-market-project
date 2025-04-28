@@ -4,6 +4,10 @@ import com.company.exception.AppBadRequestException;
 import com.company.users.dto.UserCreationDto;
 import com.company.users.dto.UserResponseDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -27,9 +31,14 @@ public class UserService {
         }
     }
 
-    public List<UserResponseDto> getAll() {
-        return userRepository.findAllByVisibilityIsTrue()
-                .stream().map(e -> new UserResponseDto(e.getId(), e.getFullName(), e.getEmail())).toList();
+    public Page<UserResponseDto> getAll(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        List<UserResponseDto> list = userRepository
+                .findAllByVisibilityIsTrue(pageable)
+                .stream()
+                .map(userEntity -> new UserResponseDto(userEntity.getId(), userEntity.getFullName(), userEntity.getEmail()))
+                .toList();
+        return new PageImpl<>(list, pageable, list.size());
     }
 
     public UserResponseDto update(UUID id, UserCreationDto userCreationDto) {
