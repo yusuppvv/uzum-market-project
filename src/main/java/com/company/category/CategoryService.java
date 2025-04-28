@@ -3,8 +3,14 @@ package com.company.category;
 import com.company.category.DTO.CategoryCr;
 import com.company.category.DTO.CategoryResp;
 import com.company.exception.AppBadRequestException;
-import com.company.exception.ItemNotFoundException;
+import com.company.product.ProductEntity;
+import com.company.product.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +23,8 @@ import java.util.UUID;
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
+    private final ProductRepository productRepository;
+    private final ApplicationArguments applicationArguments;
 
     public ResponseEntity<CategoryResp> create(CategoryCr categoryCr) {
 
@@ -44,13 +52,15 @@ public class CategoryService {
         return ResponseEntity.ok(toDTO(categoryEntity));
     }
 
-    public ResponseEntity<List<CategoryResp>> getAll() {
+    public ResponseEntity<Page<CategoryResp>> getAll(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        List<CategoryResp> list = categoryRepository
+                .findAllByVisibilityTrue(pageable)
+                .stream()
+                .map(this::toDTO)
+                .toList();
         return ResponseEntity.ok(
-                categoryRepository
-                        .findAllByVisibilityTrue()
-                        .stream()
-                        .map(this::toDTO)
-                        .toList()
+                new PageImpl<>(list, pageable, list.size())
         );
 
     }
@@ -100,5 +110,12 @@ public class CategoryService {
         return categoryRepository
                 .findByIdAndVisibilityTrue(id)
                 .orElseThrow();
+    }
+
+    public ResponseEntity<Page<CategoryResp>> getBySellerId(int page, int size, UUID sellerId) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ProductEntity> productPage = productRepository.findByCategoryId(sellerId, pageable);
+        Page<CategoryResp> categoryRespPage = productPage.map(this::toDTO);
+        return ResponseEntity.ok(categoryRespPage);
     }
 }
