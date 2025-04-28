@@ -3,6 +3,7 @@ package com.company.users;
 import com.company.users.dto.UserCreationDto;
 import com.company.users.dto.UserResponseDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,8 +22,9 @@ public class UserController {
     }
 
     @GetMapping("/get-all")
-    public ResponseEntity<List<UserResponseDto>> get() {
-        return ResponseEntity.ok(userService.getAll());
+    public ResponseEntity<Page<UserResponseDto>> get(@RequestParam int page,
+                                                     @RequestParam int size) {
+        return ResponseEntity.ok(userService.getAll(page, size));
     }
 
     @PutMapping("/update-by-id/{id}")

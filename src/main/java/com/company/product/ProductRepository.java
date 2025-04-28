@@ -14,5 +14,12 @@ public interface ProductRepository extends JpaRepository<ProductEntity, UUID> {
 
     Optional<ProductEntity> findByIdAndVisibilityTrue(UUID id);
 
-    Page<ProductEntity> findByCategoryId(UUID sellerId, Pageable pageable);
+    Page<ProductEntity> findAllByVisibilityTrue(Pageable pageable);
+
+    Page<ProductEntity> findBySellerIdAndVisibilityTrue(UUID sellerId, Pageable pageable);
+
+    Page<ProductEntity> findAllByTitleContainingIgnoreCaseAndVisibilityTrue(String title, Boolean visibility,
+                                                                            Pageable pageable);
+
+    Page<ProductEntity> findAllByPriceBetweenAndVisibilityTrue(double priceAfter, double priceBefore, Boolean visibility, Pageable pageable);
 }

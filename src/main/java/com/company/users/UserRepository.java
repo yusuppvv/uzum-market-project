@@ -1,5 +1,7 @@
 package com.company.users;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.List;
@@ -10,7 +12,7 @@ import java.util.UUID;
 public interface UserRepository extends JpaRepository<UserEntity, UUID> {
     Optional<UserEntity> findByFullNameOrEmail(String fullName, String email);
 
-    List<UserEntity> findAllByVisibilityIsTrue();
+    Page<UserEntity> findAllByVisibilityIsTrue(Pageable pageable);
 
     Optional<UserEntity> findByIdAndVisibilityIsTrue(UUID id);
 }

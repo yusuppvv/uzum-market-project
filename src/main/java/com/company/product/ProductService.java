@@ -1,9 +1,15 @@
 package com.company.product;
 
+import com.company.category.CategoryEntity;
+import com.company.category.DTO.CategoryResp;
 import com.company.exception.AppBadRequestException;
 import com.company.product.dto.ProductCreationDto;
 import com.company.product.dto.ProductResponseDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -32,14 +38,50 @@ public class ProductService {
                 .build();
     }
 
-    public List<ProductResponseDto> getAllProduct() {
-        List<ProductEntity> all = productRepository.findAll();
-        return all.stream().map(product -> ProductResponseDto.builder()
-                .id(product.getId())
-                .title(product.getTitle())
-                .description(product.getDescription())
-                .price(product.getPrice())
-                .build()).collect(toList());
+    public Page<ProductResponseDto> getAllProduct(int page, int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+//        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt"));
+
+        List<ProductResponseDto> list = productRepository
+                .findAllByVisibilityTrue(pageable)
+                .stream()
+                .map(this::toDTO)
+                .toList();
+
+        return new PageImpl<>(list, pageable, list.size());
+
+    }
+    public Page<ProductResponseDto> getBySellerId(UUID sellerId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        List<ProductResponseDto> list = productRepository.findBySellerIdAndVisibilityTrue(sellerId, pageable).stream().map(this::toDTO).toList();
+        return new PageImpl<>(list, pageable, list.size());
+    }
+
+    public Page<ProductResponseDto> searchByTitle(String title, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        List<ProductResponseDto> list = productRepository.findAllByTitleContainingIgnoreCaseAndVisibilityTrue(title, true, pageable)
+                .stream().map(this::toDTO).toList();
+        return new PageImpl<>(list, pageable, list.size());
+    }
+
+    public Page<ProductResponseDto> getByRange(double minPrice, double maxPrice, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        List<ProductResponseDto> list = productRepository.findAllByPriceBetweenAndVisibilityTrue(minPrice, maxPrice, true, pageable)
+                .stream().map(this::toDTO).toList();
+        return new PageImpl<>(list, pageable, list.size());
+    }
+
+
+    private ProductResponseDto toDTO(ProductEntity productEntity) {
+        return ProductResponseDto
+                .builder()
+                .id(productEntity.getId())
+                .title(productEntity.getTitle())
+                .description(productEntity.getDescription())
+                .price(productEntity.getPrice())
+                .build();
     }
 
 

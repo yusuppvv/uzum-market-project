@@ -35,7 +35,7 @@ public class ProductEntity extends BaseMapper {
     private UserEntity user;
 
     @Column(name = "seller_id")
-    private UUID userId;
+    private UUID sellerId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id",
