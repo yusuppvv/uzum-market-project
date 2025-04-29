@@ -18,6 +18,8 @@ import java.util.UUID;
 public class PhotoEntity extends BaseMapper {
 
     private byte[] data;
+    @Column
+    private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id",
