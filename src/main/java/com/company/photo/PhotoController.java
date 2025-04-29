@@ -56,9 +56,8 @@ public class PhotoController {
         );
     }
 
-    @GetMapping(value = "/by-product-id/{productId}",
-    produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE})
-    public ResponseEntity<byte[]> getPhotoByProductId(@PathVariable UUID productId) {
+    @GetMapping("/by-product-id/{productId}")
+    public ResponseEntity<List<PhotoResp>> getPhotoByProductId(@PathVariable UUID productId) {
         return ResponseEntity.ok(photoService.getPhotosByProductId(productId));
     }
 

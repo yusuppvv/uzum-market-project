@@ -12,7 +12,13 @@ Content-Disposition: form-data; name="file"; filename="photo.jpg"
 GET http://localhost:8080/api/v1/photo/c7ced88f-f9dd-4b32-b4e7-c799ae118482
 
 ###
+GET localhost:8080/api/v1/photo/by-product-id/d628769f-2e10-4805-b9a1-481d88a88047
+
+###
 GET localhost:8080/api/v1/photo/metadata/a130ac36-e822-492e-9ce0-2d94f49b64b4
+
+###
+GET localhost:8080/api/v1/photo/search?name=photo1.jpg
 
 ###
 POST localhost:8080/api/v1/photo/multi-upload?productId=d628769f-2e10-4805-b9a1-481d88a88047

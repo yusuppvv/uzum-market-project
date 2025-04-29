@@ -69,10 +69,13 @@ public class PhotoService {
             throw new ItemNotFoundException();
     }
 
-    public byte[] getPhotosByProductId(UUID productId) {
-        Optional<PhotoEntity> byProductIdAndVisibilityTrue = photoRepository.findByProductIdAndVisibilityTrue(productId);
+    public List<PhotoResp> getPhotosByProductId(UUID productId) {
+        Optional<List<PhotoEntity>> byProductIdAndVisibilityTrue = photoRepository.findByProductIdAndVisibilityTrue(productId);
         if (byProductIdAndVisibilityTrue.isPresent()) {
-            return byProductIdAndVisibilityTrue.get().getData();
+            List<PhotoEntity> photoEntities = byProductIdAndVisibilityTrue.get();
+            return photoEntities.stream()
+                    .map(this::toDTO)
+                    .collect(toList());
         }
         else throw new ItemNotFoundException();
     }

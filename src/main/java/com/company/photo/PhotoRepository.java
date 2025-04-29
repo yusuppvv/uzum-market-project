@@ -15,5 +15,5 @@ public interface PhotoRepository extends JpaRepository<PhotoEntity, UUID> {
 
     Optional<PhotoEntity> findByNameAndVisibilityTrue(String name);
 
-    Optional<PhotoEntity> findByProductIdAndVisibilityTrue(UUID productId);
+    Optional<List<PhotoEntity>> findByProductIdAndVisibilityTrue(UUID productId);
 }
