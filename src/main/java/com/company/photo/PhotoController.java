@@ -56,13 +56,15 @@ public class PhotoController {
         );
     }
 
-    @GetMapping("/by-product/{productId}")
-    public ResponseEntity<List<PhotoResp>> getPhotoByproduct(@PathVariable UUID productId) {
+    @GetMapping(value = "/by-product-id/{productId}",
+    produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE})
+    public ResponseEntity<byte[]> getPhotoByProductId(@PathVariable UUID productId) {
         return ResponseEntity.ok(photoService.getPhotosByProductId(productId));
     }
 
-    @GetMapping("/search")
-    public ResponseEntity<PhotoResp> searchPhotoByName(@RequestParam String name) {
+    @GetMapping(value = "/search",
+    produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE})
+    public ResponseEntity<byte[]> searchPhotoByName(@RequestParam String name) {
         return ResponseEntity.ok(photoService.searchPhotosByName(name));
     }
 }

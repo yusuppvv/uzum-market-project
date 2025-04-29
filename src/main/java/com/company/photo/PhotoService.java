@@ -69,26 +69,25 @@ public class PhotoService {
             throw new ItemNotFoundException();
     }
 
+    public byte[] getPhotosByProductId(UUID productId) {
+        Optional<PhotoEntity> byProductIdAndVisibilityTrue = photoRepository.findByProductIdAndVisibilityTrue(productId);
+        if (byProductIdAndVisibilityTrue.isPresent()) {
+            return byProductIdAndVisibilityTrue.get().getData();
+        }
+        else throw new ItemNotFoundException();
+    }
+
     public List<PhotoResp> multiUpload(MultipartFile[] files, UUID productId) {
         return Arrays.stream(files)
                 .map(file -> upload(file, productId))
                 .collect(toList());
     }
 
-    public List<PhotoResp> getPhotosByProductId(UUID productId) {
-        List<PhotoEntity> allByProductIdAndVisibilityTrue = photoRepository.findAllByProductIdAndVisibilityTrue(productId);
-        List<PhotoResp> list = allByProductIdAndVisibilityTrue.stream()
-                .map(this::toDTO)
-                .toList();
-        return list;
-    }
-
-    public PhotoResp searchPhotosByName(String name) {
+    public byte[] searchPhotosByName(String name) {
         Optional<PhotoEntity> byNameAndVisibilityTrue = photoRepository.findByNameAndVisibilityTrue(name);
         if (byNameAndVisibilityTrue.isPresent()) {
-            return toDTO(byNameAndVisibilityTrue.get());
+            return byNameAndVisibilityTrue.get().getData();
         }
-        else return null;
-
+        else throw new ItemNotFoundException();
     }
 }
