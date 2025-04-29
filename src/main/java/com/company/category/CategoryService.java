@@ -114,8 +114,8 @@ public class CategoryService {
 
     public ResponseEntity<Page<CategoryResp>> getBySellerId(int page, int size, UUID sellerId) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<ProductEntity> productPage = productRepository.findByCategoryId(sellerId, pageable);
-        Page<CategoryResp> categoryRespPage = productPage.map(this::toDTO);
+        Page<ProductEntity> productPage = productRepository.findBySellerId(sellerId, pageable);
+        Page<CategoryResp> categoryRespPage = productPage.map(productEntity -> toDTO(productEntity.getCategory()));
         return ResponseEntity.ok(categoryRespPage);
     }
 }

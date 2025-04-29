@@ -22,4 +22,6 @@ public interface ProductRepository extends JpaRepository<ProductEntity, UUID> {
                                                                             Pageable pageable);
 
     Page<ProductEntity> findAllByPriceBetweenAndVisibilityTrue(double priceAfter, double priceBefore, Boolean visibility, Pageable pageable);
+
+    Page<ProductEntity> findBySellerId(UUID sellerId, Pageable pageable);
 }

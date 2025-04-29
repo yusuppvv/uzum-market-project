@@ -8,7 +8,8 @@ Content-Type: application/json
 ###
 GET localhost:8080/api/v1/category?page=1&size=5
 
-
+###
+GET localhost:8080/api/v1/category/get-by-seller-id/72070588-392c-4ad6-a9c7-958e94b549d7?page=0&size=5
 ###
 PUT localhost:8080/api/v1/category/update/72070588-392c-4ad6-a9c7-958e94b549d7
 Content-Type: application/json
