@@ -5,10 +5,20 @@ Content-Type: application/json
 {
   "title": "iPhone 13 pro",
   "description": "Apple phone",
-  "price":1000
+  "price": 1000
 }
+
 ### Get all products
-GET localhost:8080/api/v1/product/get-all
+GET localhost:8080/api/v1/product/get-all?page=0&size=5
+
+### Get by seller
+GET localhost:8080/api/v1/product/get-by-seller/e59922f4-2002-4122-9877-b012eaaaa479?page=0&size=5
+
+### Search by title
+GET localhost:8080/api/v1/product/search?title=iPhone&page=0&size=5
+
+### Get by price range
+GET localhost:8080/api/v1/product/get-by-range?minPrice=100&maxPrice=2000
 
 ### Update product by id
 PUT localhost:8080/api/v1/product/e59922f4-2002-4122-9877-b012eaaaa479
@@ -17,7 +27,7 @@ Content-Type: application/json
 {
   "title": "Mac book",
   "description": "Notebook",
-  "price": 1.200
+  "price": 1200
 }
 
 ### Delete product by id
