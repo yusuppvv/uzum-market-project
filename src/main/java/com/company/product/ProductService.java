@@ -66,6 +66,10 @@ public class ProductService {
         return new PageImpl<>(list, pageable, list.size());
     }
 
+    public static void main(String[] args) {
+
+    }
+
     public Page<ProductResponseDto> getByRange(double minPrice, double maxPrice, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         List<ProductResponseDto> list = productRepository.findAllByPriceBetweenAndVisibilityTrue(minPrice, maxPrice, true, pageable)
