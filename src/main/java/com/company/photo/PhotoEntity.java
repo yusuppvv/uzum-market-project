@@ -17,7 +17,6 @@ import java.util.UUID;
 @Entity(name = "photo")
 public class PhotoEntity extends BaseMapper {
 
-    @Lob
     private byte[] data;
 
     @ManyToOne(fetch = FetchType.LAZY)
