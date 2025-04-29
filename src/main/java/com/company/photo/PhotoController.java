@@ -1,6 +1,7 @@
 package com.company.photo;
 
 
+import com.company.product.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import java.util.UUID;
 public class PhotoController {
 
     private final PhotoService photoService;
+    private final ProductRepository productRepository;
 
 
     @PostMapping("/upload")
@@ -52,5 +54,15 @@ public class PhotoController {
         return ResponseEntity.ok(
                 photoService.getById(id)
         );
+    }
+
+    @GetMapping("/by-product/{productId}")
+    public ResponseEntity<List<PhotoResp>> getPhotoByproduct(@PathVariable UUID productId) {
+        return ResponseEntity.ok(photoService.getPhotosByProductId(productId));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<PhotoResp> searchPhotoByName(@RequestParam String name) {
+        return ResponseEntity.ok(photoService.searchPhotosByName(name));
     }
 }

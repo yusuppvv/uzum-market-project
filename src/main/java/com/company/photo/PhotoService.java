@@ -2,7 +2,6 @@ package com.company.photo;
 
 import com.company.exception.ItemNotFoundException;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -11,7 +10,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -75,5 +73,22 @@ public class PhotoService {
         return Arrays.stream(files)
                 .map(file -> upload(file, productId))
                 .collect(toList());
+    }
+
+    public List<PhotoResp> getPhotosByProductId(UUID productId) {
+        List<PhotoEntity> allByProductIdAndVisibilityTrue = photoRepository.findAllByProductIdAndVisibilityTrue(productId);
+        List<PhotoResp> list = allByProductIdAndVisibilityTrue.stream()
+                .map(this::toDTO)
+                .toList();
+        return list;
+    }
+
+    public PhotoResp searchPhotosByName(String name) {
+        Optional<PhotoEntity> byNameAndVisibilityTrue = photoRepository.findByNameAndVisibilityTrue(name);
+        if (byNameAndVisibilityTrue.isPresent()) {
+            return toDTO(byNameAndVisibilityTrue.get());
+        }
+        else return null;
+
     }
 }
