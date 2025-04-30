@@ -38,12 +38,8 @@ public class PhotoService {
     }
 
     public String deleteById(UUID id) {
-        Optional<PhotoEntity> byIdAndVisibilityTrue = photoRepository.findByIdAndVisibilityTrue(id);
-        if (byIdAndVisibilityTrue.isPresent()) {
-            byIdAndVisibilityTrue.get().setVisibility(false);
-            return "Successfully deleted";
-        }
-        else return "Photo not found";
+        photoRepository.deleteById(id);
+        return "Photo with id: " + id + " deleted successfully";
     }
 
     public PhotoResp metadata(UUID id) {
