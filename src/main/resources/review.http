@@ -1,0 +1,14 @@
+###
+POST localhost:8080/api/v1/reviews/create
+Content-Type: application/json
+
+{
+  "rating": 5,
+  "comment": "very good",
+  "productId": "e4060e50-4516-403e-8461-be92ae118e33"
+
+}
+
+
+###
+GET localhost:8080/api/v1/reviews/get-all-productId?productId=e4060e50-4516-403e-8461-be92ae118e33

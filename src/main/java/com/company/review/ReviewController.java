@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/api/v1/reviews")
 @RequiredArgsConstructor
@@ -17,4 +19,8 @@ public class ReviewController {
         return ResponseEntity.ok(reviewService.create(reviewCreation));
     }
 
+    @GetMapping("get-all-productId")
+    public ResponseEntity<String> getAllByProductId(@RequestParam("productId") UUID productId) {
+        return ResponseEntity.ok(reviewService.getAllByProductId(productId));
+    }
 }

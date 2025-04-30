@@ -10,4 +10,6 @@ import java.util.UUID;
 @Repository
 public interface ReviewRepository extends JpaRepository<ReviewEntity, UUID> {
     Optional<ReviewEntity> findByUserIdAndVisibilityTrue(UUID userId);
+
+    List<ReviewEntity> getAllByProductId(UUID productId);
 }

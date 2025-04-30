@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,4 +28,13 @@ public class ReviewService {
             return new ReviewResponse(save.getRating(), save.getComment(), save.getProductId(), save.getUserId());
         }
     }
+
+    public String getAllByProductId(UUID productId) {
+        List<ReviewEntity> allByProductId = reviewRepository.getAllByProductId(productId);
+        return allByProductId.stream()
+                .map(ReviewEntity::getComment)
+                .collect(Collectors.joining("\n"));
+
+    }
+
 }
