@@ -9,10 +9,6 @@ import java.util.UUID;
 public interface PhotoRepository extends JpaRepository<PhotoEntity, UUID> {
     Optional<PhotoEntity> findByIdAndVisibilityTrue(UUID id);
 
-    void findByNameContainingIgnoreCase(String name);
-
-    List<PhotoEntity> findAllByProductIdAndVisibilityTrue(UUID productId);
-
     Optional<PhotoEntity> findByNameAndVisibilityTrue(String name);
 
     Optional<List<PhotoEntity>> findByProductIdAndVisibilityTrue(UUID productId);
