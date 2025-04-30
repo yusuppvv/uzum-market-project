@@ -1,9 +1,14 @@
 package com.company.review;
 
+import com.company.exception.AlreadyExistException;
+import com.company.review.dto.ReviewCreation;
+import com.company.review.dto.ReviewResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -11,15 +16,15 @@ import java.util.stream.Collectors;
 public class ReviewService {
     private final ReviewRepository reviewRepository;
 
-    public ReviewEntity createReview(ReviewEntity review) {
-        ReviewEntity save = reviewRepository.save(review);
-        return save;
-    }
 
-    public String getAllReviews() {
-        List<ReviewEntity> all = reviewRepository.findAll();
-       return all.stream()
-               .map(ReviewEntity::toString)
-               .collect(Collectors.joining("\n"));
+    public ReviewResponse create(ReviewCreation reviewCreation) {
+        Optional<ReviewEntity> byUserIdAndVisibilityTrue = reviewRepository.findByUserIdAndVisibilityTrue(reviewCreation.getUserId());
+        if (byUserIdAndVisibilityTrue.isPresent()) {
+            throw new AlreadyExistException("Review already exists for this user.");
+        }
+        else {
+            ReviewEntity save = reviewRepository.save(new ReviewEntity(reviewCreation.getRating(), reviewCreation.getComment(), reviewCreation.getProductId(), reviewCreation.getUserId()));
+            return new ReviewResponse(save.getRating(), save.getComment(), save.getProductId(), save.getUserId());
+        }
     }
 }

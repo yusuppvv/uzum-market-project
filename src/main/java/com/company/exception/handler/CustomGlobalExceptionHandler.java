@@ -1,5 +1,6 @@
 package com.company.exception.handler;
 
+import com.company.exception.AlreadyExistException;
 import com.company.exception.ItemNotFoundException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -49,6 +50,16 @@ public class CustomGlobalExceptionHandler {
         Map<String, Object> body = new HashMap<>();
         body.put("timestamp", LocalDateTime.now());
         body.put("status", HttpStatus.NOT_FOUND.value());
+        body.put("error", "Internal Server Error");
+        body.put("message", ex.getMessage());
+        return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(AlreadyExistException.class)
+    public ResponseEntity<Map<String, Object>> AlreadyExistException(Exception ex) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("status", HttpStatus.BAD_REQUEST.value());
         body.put("error", "Internal Server Error");
         body.put("message", ex.getMessage());
         return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);

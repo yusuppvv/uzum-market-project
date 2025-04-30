@@ -1,6 +1,7 @@
 package com.company.review;
 
-import com.company.product.ProductEntity;
+import com.company.review.dto.ReviewCreation;
+import com.company.review.dto.ReviewResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,14 +12,9 @@ import org.springframework.web.bind.annotation.*;
 public class ReviewController {
     private final ReviewService reviewService;
 
-    @PostMapping
-    public ResponseEntity<ReviewEntity> createReview(@RequestBody ReviewEntity review) {
-        return ResponseEntity.ok(reviewService.createReview(review));
-    }
-
-    @GetMapping
-    public ResponseEntity<String> getAllReviews() {
-        return ResponseEntity.ok(reviewService.getAllReviews());
+    @PostMapping("/create")
+    public ResponseEntity<ReviewResponse> create(@RequestBody ReviewCreation reviewCreation) {
+        return ResponseEntity.ok(reviewService.create(reviewCreation));
     }
 
 }
