@@ -27,6 +27,7 @@ public class ProductEntity extends BaseMapper {
     private String title;
     private String description;
     private double price;
+    private double rating;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id",
