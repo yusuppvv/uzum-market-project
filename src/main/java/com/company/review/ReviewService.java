@@ -1,72 +1,86 @@
 package com.company.review;
 
 import com.company.exception.AlreadyExistException;
-import com.company.product.ProductEntity;
-import com.company.product.ProductRepository;
+import com.company.exception.ItemNotFoundException;
+import com.company.exception.ReviewNotFoundException;
 import com.company.review.dto.ReviewCreation;
 import com.company.review.dto.ReviewResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ReviewService {
     private final ReviewRepository reviewRepository;
-    private final ProductRepository productRepository;
 
 
-    public ReviewEntity create(ReviewEntity reviewEntity) {
-        if (reviewRepository.findByProductIdAndUserId(reviewEntity.getProductId(), reviewEntity.getUserId()).isPresent())
-            throw new RuntimeException("Bu foydalanuvchi allaqachon review qoldirgan");
-
-        if (reviewEntity.getRating() < 1 || reviewEntity.getRating() > 5)
-            throw new RuntimeException("Rating 1 dan 5 gacha bo‘lishi kerak");
-
-        ReviewEntity saved = reviewRepository.save(reviewEntity);
-        updateProductRating(reviewEntity.getProductId());
-        return saved;
+    public ReviewResponse create(ReviewCreation creation) {
+        Optional<ReviewEntity> byUserIdAndVisibilityTrue = reviewRepository.findByUserIdAndVisibilityTrue(creation.getUserId());
+        if (byUserIdAndVisibilityTrue.isPresent()) {
+            throw new AlreadyExistException("User already has a review");
+        }
+        else {
+            ReviewEntity save = reviewRepository.save(new ReviewEntity(creation.getRating(), creation.getComment(), creation.getProductId(), creation.getUserId()));
+            return new ReviewResponse(save.getRating(), save.getComment(), save.getProductId(), save.getUserId());
+        }
     }
 
-    public String getAllByProductId(UUID productId) {
-        List<ReviewEntity> allByProductId = reviewRepository.findAllByProductId(productId);
-        return allByProductId.stream()
-                .map(ReviewEntity::getComment)
-                .collect(Collectors.joining("\n"));
-
+    public List<ReviewResponse> getAllByProductId(UUID productId) {
+        List<ReviewEntity> allByProductIdAndVisibilityTrue = reviewRepository.findAllByProductIdAndVisibilityTrue(productId);
+        if (allByProductIdAndVisibilityTrue.isEmpty()) {
+            throw new NullPointerException("There are no reviews for this product.");
+        }
+        else {
+            return allByProductIdAndVisibilityTrue.stream()
+                    .map(this::toDto)
+                    .toList();
+        }
     }
 
-    public String getReviewById(UUID id) {
-        Optional<ReviewEntity> byId = reviewRepository.findById(id);
-         return byId.map(ReviewEntity::getComment).orElse("");
+    public ReviewResponse getReviewById(UUID id) {
+        Optional<ReviewEntity> byIdAndVisibilityTrue = reviewRepository.findByIdAndVisibilityTrue(id);
+        if (byIdAndVisibilityTrue.isPresent()) {
+            return toDto(byIdAndVisibilityTrue.get());
+        }
+        else {
+            throw new ReviewNotFoundException("No review by this Id");
+        }
     }
 
-    public ReviewResponse UpdateReview(UUID id, ReviewCreation reviewCreation) {
-        ReviewEntity reviewEntity = reviewRepository.findById(id).orElseThrow();
-        reviewEntity.setRating(reviewCreation.getRating());
-        reviewEntity.setComment(reviewCreation.getComment());
-        reviewRepository.save(reviewEntity);
+    public ReviewResponse updateReview(UUID id, ReviewCreation reviewCreation) {
+        Optional<ReviewEntity> byIdAndVisibilityTrue = reviewRepository.findByIdAndVisibilityTrue(id);
+        if (byIdAndVisibilityTrue.isPresent()) {
+            ReviewEntity reviewEntity = byIdAndVisibilityTrue.get();
+            reviewEntity.setRating(reviewCreation.getRating());
+            reviewEntity.setComment(reviewCreation.getComment());
+            reviewEntity.setProductId(reviewCreation.getProductId());
+            reviewEntity.setUserId(reviewCreation.getUserId());
+            ReviewEntity save = reviewRepository.save(reviewEntity);
+            return new ReviewResponse(save.getRating(), save.getComment(), save.getProductId(), save.getUserId());
+        }
+        else {
+            throw new ItemNotFoundException();
+        }
+    }
+
+    public String deleteReviewById(UUID id) {
+        Optional<ReviewEntity> byIdAndVisibilityTrue = reviewRepository.findByIdAndVisibilityTrue(id);
+        if (byIdAndVisibilityTrue.isPresent()) {
+            ReviewEntity reviewEntity = byIdAndVisibilityTrue.get();
+            reviewEntity.setVisibility(false);
+            return "Successfully deleted";
+        }
+        else {
+            throw new ItemNotFoundException();
+        }
+    }
+
+
+    private ReviewResponse toDto(ReviewEntity reviewEntity) {
         return new ReviewResponse(reviewEntity.getRating(), reviewEntity.getComment(), reviewEntity.getProductId(), reviewEntity.getUserId());
-    }
-
-    public void deleteReviewById(UUID id) {
-        reviewRepository.deleteById(id);
-    }
-
-    private void updateProductRating(UUID productId) {
-        List<ReviewEntity> reviews = reviewRepository.findAllByProductId(productId);
-        double avg = reviews.stream()
-                .mapToInt(ReviewEntity::getRating)
-                .average()
-                .orElse(0.0);
-
-        ProductEntity product = productRepository.findById(productId).orElseThrow();
-        product.setRating(Math.round(avg * 10.0) / 10.0);
-        productRepository.save(product);
     }
 }

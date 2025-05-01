@@ -49,7 +49,6 @@ public class UserEntity extends BaseMapper {
 
     @OneToMany(mappedBy = "user")
     private List<CartEntity> carts;
-
     @OneToMany(mappedBy = "user")
     private List<ReviewEntity> reviews;
 }
