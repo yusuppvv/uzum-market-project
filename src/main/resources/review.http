@@ -4,8 +4,19 @@ Content-Type: application/json
 {
   "userId": "6b15732e-6068-464a-8616-abd43a39873e",
   "productId": "d628769f-2e10-4805-b9a1-481d88a88047",
-  "comment": "Yomon narsa",
-  "rating": 2
+  "comment": "Yaxshi narsa",
+  "rating": 5
+}
+
+###
+POST localhost:8080/api/v1/reviews/create
+Content-Type: application/json
+
+{
+  "userId": "082c8e6f-d53c-4f04-a517-f05edc3eaff8",
+  "productId": "d628769f-2e10-4805-b9a1-481d88a88047",
+  "comment": "Yomon",
+  "rating": 3
 }
 
 ###

@@ -13,6 +13,7 @@ import org.hibernate.annotations.Check;
 import java.util.UUID;
 
 @Entity
+@Table(name = "review")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
