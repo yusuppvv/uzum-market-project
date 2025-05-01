@@ -30,7 +30,7 @@ public class ReviewController {
         return ResponseEntity.ok(reviewService.getReviewById(id));
     }
 
-    @PutMapping("/update/review/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<ReviewResponse> updateReview(@PathVariable UUID id, @RequestBody ReviewCreation reviewCreation) {
         return ResponseEntity.ok(reviewService.updateReview(id, reviewCreation));
     }

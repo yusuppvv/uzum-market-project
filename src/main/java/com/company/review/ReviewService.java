@@ -72,6 +72,7 @@ public class ReviewService {
         if (byIdAndVisibilityTrue.isPresent()) {
             ReviewEntity reviewEntity = byIdAndVisibilityTrue.get();
             reviewEntity.setVisibility(false);
+            reviewRepository.save(reviewEntity);
             return "Successfully deleted";
         }
         else {

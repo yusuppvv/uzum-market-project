@@ -1,29 +1,29 @@
-###
 POST localhost:8080/api/v1/reviews/create
 Content-Type: application/json
 
 {
-  "rating": 5,
-  "comment": "very good",
-  "productId": "51a3cf0e-73ed-4305-9ce7-8edcdf82dfb4"
-
+  "userId": "6b15732e-6068-464a-8616-abd43a39873e",
+  "productId": "d628769f-2e10-4805-b9a1-481d88a88047",
+  "comment": "Yomon narsa",
+  "rating": 2
 }
 
+###
+GET localhost:8080/api/v1/reviews/get-all-productId/d628769f-2e10-4805-b9a1-481d88a88047
 
 ###
-GET localhost:8080/api/v1/reviews/get-all-productId?productId=0e617a07-58ca-4eed-adcb-42d955b8bc62
-
-
-###
-GET localhost:8080/api/v1/reviews/get-review/6b1c2240-9d49-465c-a221-0d9faf5a4302
-
+GET localhost:8080/api/v1/reviews/get-review/648ca08c-9550-49b7-b7ad-d45553b81af4
 
 ###
-PUT localhost:8080/api/v1/reviews/update/review/6b1c2240-9d49-465c-a221-0d9faf5a4302
+PUT localhost:8080/api/v1/reviews/update/648ca08c-9550-49b7-b7ad-d45553b81af4
 Content-Type: application/json
 
 {
-  "productId": "0e617a07-58ca-4eed-adcb-42d955b8bc6",
-  "rating": 4,
-  "comment": "Yaxshi, lekin narxi baland."
+  "comment": "Yana bir marta o'ylab ko'ring",
+  "rating": 5,
+  "productId": "d628769f-2e10-4805-b9a1-481d88a88047",
+  "userId": "6b15732e-6068-464a-8616-abd43a39873e"
 }
+
+###
+DELETE localhost:8080/api/v1/reviews/delete-review/648ca08c-9550-49b7-b7ad-d45553b81af4
