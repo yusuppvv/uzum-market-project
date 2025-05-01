@@ -1,7 +1,7 @@
 package com.company.review;
 
-import com.company.review.dto.ReviewCreation;
-import com.company.review.dto.ReviewResponse;
+import com.company.review.ReviewCreation;
+import com.company.review.ReviewResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,9 +30,9 @@ public class ReviewController {
         return ResponseEntity.ok(reviewService.getReviewById(id));
     }
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<ReviewResponse> updateReview(@PathVariable UUID id, @RequestBody ReviewCreation reviewCreation) {
-        return ResponseEntity.ok(reviewService.updateReview(id, reviewCreation));
+    @PutMapping("/update")
+    public ResponseEntity<ReviewResponse> updateReview(@RequestBody ReviewCreation reviewCreation) {
+        return ResponseEntity.ok(reviewService.updateReview(reviewCreation));
     }
 
     @DeleteMapping("/delete-review/{id}")

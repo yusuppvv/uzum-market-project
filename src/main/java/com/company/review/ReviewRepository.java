@@ -18,4 +18,6 @@ public interface ReviewRepository extends JpaRepository<ReviewEntity, UUID> {
     List<ReviewEntity> findAllByProductIdAndVisibilityTrue(UUID productId);
 
     Optional<ReviewEntity> findByIdAndVisibilityTrue(UUID id);
+
+    Optional<ReviewEntity> findByUserIdAndProductIdAndVisibilityTrue(UUID userId, UUID productID);
 }

@@ -1,10 +1,7 @@
 package com.company.review;
 
-import com.company.exception.AlreadyExistException;
+import com.company.exception.AppBadRequestException;
 import com.company.exception.ItemNotFoundException;
-import com.company.exception.ReviewNotFoundException;
-import com.company.review.dto.ReviewCreation;
-import com.company.review.dto.ReviewResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,14 +16,15 @@ public class ReviewService {
 
 
     public ReviewResponse create(ReviewCreation creation) {
-        Optional<ReviewEntity> byUserIdAndVisibilityTrue = reviewRepository.findByUserIdAndVisibilityTrue(creation.getUserId());
-        if (byUserIdAndVisibilityTrue.isPresent()) {
-            throw new AlreadyExistException("User already has a review");
+        Optional<ReviewEntity> optional =
+                reviewRepository.findByUserIdAndProductIdAndVisibilityTrue(creation.getUserId(), creation.getProductId());
+        if (optional.isPresent()) {
+            throw new AppBadRequestException("Allaqchon Mavjud");
         }
-        else {
-            ReviewEntity save = reviewRepository.save(new ReviewEntity(creation.getRating(), creation.getComment(), creation.getProductId(), creation.getUserId()));
-            return new ReviewResponse(save.getRating(), save.getComment(), save.getProductId(), save.getUserId());
-        }
+            ReviewEntity save =
+                    reviewRepository.save(toEntity(creation));
+
+        return toDto(save);
     }
 
     public List<ReviewResponse> getAllByProductId(UUID productId) {
@@ -47,14 +45,17 @@ public class ReviewService {
             return toDto(byIdAndVisibilityTrue.get());
         }
         else {
-            throw new ReviewNotFoundException("No review by this Id");
+            throw new ItemNotFoundException();
         }
     }
 
-    public ReviewResponse updateReview(UUID id, ReviewCreation reviewCreation) {
-        Optional<ReviewEntity> byIdAndVisibilityTrue = reviewRepository.findByIdAndVisibilityTrue(id);
-        if (byIdAndVisibilityTrue.isPresent()) {
-            ReviewEntity reviewEntity = byIdAndVisibilityTrue.get();
+    public ReviewResponse updateReview(ReviewCreation reviewCreation) {
+
+        Optional<ReviewEntity> optional =
+                reviewRepository.findByUserIdAndProductIdAndVisibilityTrue(reviewCreation.getUserId(), reviewCreation.getProductId());
+
+        if (optional.isPresent()) {
+            ReviewEntity reviewEntity = optional.get();
             reviewEntity.setRating(reviewCreation.getRating());
             reviewEntity.setComment(reviewCreation.getComment());
             reviewEntity.setProductId(reviewCreation.getProductId());
@@ -83,5 +84,9 @@ public class ReviewService {
 
     private ReviewResponse toDto(ReviewEntity reviewEntity) {
         return new ReviewResponse(reviewEntity.getRating(), reviewEntity.getComment(), reviewEntity.getProductId(), reviewEntity.getUserId());
+    }
+
+    private ReviewEntity toEntity(ReviewCreation creation) {
+        return new ReviewEntity(creation.getRating(), creation.getComment(), creation.getProductId(), creation.getUserId());
     }
 }
