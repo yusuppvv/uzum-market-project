@@ -5,13 +5,11 @@ import com.company.orders.OrdersEntity;
 import com.company.product.ProductEntity;
 import com.company.users.UserEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.UUID;
 
+@EqualsAndHashCode(callSuper = true)
 @Entity(name = "cart")
 @Data
 @AllArgsConstructor
@@ -47,4 +45,11 @@ public class CartEntity extends BaseMapper {
 
     @Column(name = "product_id")
     private UUID productId;
+
+    public CartEntity(Integer quantity, UUID userId, UUID orderId, UUID productId) {
+        this.quantity = quantity;
+        this.userId = userId;
+        this.orderId = orderId;
+        this.productId = productId;
+    }
 }
