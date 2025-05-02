@@ -1,0 +1,26 @@
+POST localhost:8080/api/v1/cart/add
+Content-Type: application/json
+
+{
+  "productId": "d628769f-2e10-4805-b9a1-481d88a88047",
+  "userId": "6b15732e-6068-464a-8616-abd43a39873e",
+  "orderId": "550e8400-e29b-41d4-a716-446655440000",
+  "quantity": 2
+}
+
+###
+GET localhost:8080/api/v1/cart/get
+
+###
+PUT localhost:8080/api/v1/cart/update
+Content-Type: application/json
+
+{
+  "quantity": 4,
+  "orderId": "550e8400-e29b-41d4-a716-446655440000",
+  "userId": "6b15732e-6068-464a-8616-abd43a39873e",
+  "productId": "d628769f-2e10-4805-b9a1-481d88a88047"
+}
+
+###
+DELETE localhost:8080/api/v1/cart/delete/29233f96-13b3-45bb-96af-3ce60f1afc1e
