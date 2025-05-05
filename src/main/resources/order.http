@@ -1,0 +1,35 @@
+POST localhost:8080/api/v1/orders
+Content-Type: application/json
+
+{
+  "userId": "e2b96f03-244f-4fe0-b6f9-c7e842e84b06",
+  "cartIds": [
+    "75e6de2a-77d2-4d13-8ebb-1d120e427451",
+    "28aeebda-802c-42cf-ad2b-e34706efe178"
+  ]
+}
+
+###
+GET localhost:8080/api/v1/orders/get-all
+
+###
+GET localhost:8080/api/v1/orders/7ca17f56-d642-471e-82d7-4518736e09b9
+
+###
+GET localhost:8080/api/v1/orders/get-by-user/e2b96f03-244f-4fe0-b6f9-c7e842e84b06
+
+###
+PUT localhost:8080/api/v1/orders/f54f6b4e-8863-4a25-bca7-8efc334813ca
+Content-Type: application/json
+
+{
+  "cartIds": [
+    "75e6de2a-77d2-4d13-8ebb-1d120e427451",
+    "28aeebda-802c-42cf-ad2b-e34706efe178"
+  ],
+  "status": "PAYED",
+  "type": "PAYME"
+}
+
+###
+PATCH localhost:8080/api/v1/orders/pay?id=7ca17f56-d642-471e-82d7-4518736e09b9&type=PAYME

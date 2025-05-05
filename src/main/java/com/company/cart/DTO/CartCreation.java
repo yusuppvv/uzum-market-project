@@ -1,4 +1,4 @@
-package com.company.review;
+package com.company.cart.DTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,9 +11,9 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ReviewResponse {
-    private int rating;
-    private String comment;
-    private UUID productId;
+public class CartCreation {
+    private Integer quantity;
     private UUID userId;
+    private UUID orderId;
+    private UUID productId;
 }

@@ -79,22 +79,16 @@ public class CartService {
     }
 
     public ProductCart getByCartIdReturnProduct(UUID cartId, UUID userId) {
-
-        CartResp cartResp = getById(cartId);
+        CartEntity cartEntity = cartRepository
+                .findByIdAndUserIdAndVisibilityTrue(cartId, userId)
+                .orElseThrow(ItemNotFoundException::new);
 
         ProductResp productResp = productService
-                .getById(cartResp.productId());
-
-        if (cartResp.userId().equals(userId)) {
-            return ProductCart.builder()
-                    .price(productResp.getPrice())
-                    .quantity(cartResp.quantity())
-                    .build();
-        }
+                .getById(cartEntity.getProductId());
 
         return ProductCart.builder()
-                .price(BigDecimal.ZERO)
-                .quantity(0)
+                .price(productResp.getPrice())
+                .quantity(cartEntity.getQuantity())
                 .build();
     }
 

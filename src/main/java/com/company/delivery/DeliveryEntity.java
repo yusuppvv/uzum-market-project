@@ -14,9 +14,10 @@ import java.util.UUID;
 @NoArgsConstructor
 @Data
 @Builder
-@Entity(name = "delivey")
+@Entity(name = "delivery")
 public class DeliveryEntity extends BaseMapper {
     private String address;
+    @Enumerated(EnumType.STRING)
     private Status status;
 
     @ManyToOne(fetch = FetchType.LAZY)

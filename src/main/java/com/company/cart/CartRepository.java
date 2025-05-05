@@ -17,4 +17,5 @@ public interface  CartRepository extends JpaRepository<CartEntity, UUID> {
 
     Page<CartEntity> findAllByUserIdAndVisibilityTrue(UUID id, Pageable pageable);
 
+    Optional<CartEntity> findByIdAndUserIdAndVisibilityTrue(UUID cartId, UUID userId);
 }

@@ -5,7 +5,21 @@ Content-Type: application/json
 {
   "title": "iPhone 15 pro",
   "description": "Apple phone",
-  "price": 1000
+  "price": 1000,
+  "sellerId": "f0059075-e2f4-4722-868e-88bd25474fe3",
+  "categoryId": "71ae8e8a-2f58-4706-9799-2beb598b3319"
+}
+
+### Post a new product
+POST localhost:8080/api/v1/product
+Content-Type: application/json
+
+{
+  "title": "Macbook air 2017",
+  "description": "new notebook",
+  "price": 2000,
+  "categoryId": "71ae8e8a-2f58-4706-9799-2beb598b3319",
+  "sellerId": "f0059075-e2f4-4722-868e-88bd25474fe3"
 }
 
 ### Get all products

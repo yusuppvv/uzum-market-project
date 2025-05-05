@@ -14,6 +14,10 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
+import static com.company.orders.Status.UNPAYED;
+import static com.company.orders.Type.CART;
+import static com.company.orders.Type.valueOf;
+
 @Service
 @RequiredArgsConstructor
 public class OrdersService {
@@ -42,8 +46,8 @@ public class OrdersService {
         OrdersEntity ordersEntity = OrdersEntity
                 .builder()
                 .totalPrice(total)
-                .status(Status.UNPAYED)
-                .type(Type.CART)
+                .status(UNPAYED)
+                .type(CART)
                 .userId(ordersCr.getUserId())
                 .build();
 

@@ -19,8 +19,10 @@ public class OrdersEntity extends BaseMapper {
     @Column(nullable = false)
     private BigDecimal totalPrice;
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private Status status;
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private Type type;
 
 

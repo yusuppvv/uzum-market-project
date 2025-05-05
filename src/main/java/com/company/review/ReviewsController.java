@@ -2,7 +2,6 @@ package com.company.review;
 
 import com.company.review.DTO.ReviewsCr;
 import com.company.review.DTO.ReviewResp;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
