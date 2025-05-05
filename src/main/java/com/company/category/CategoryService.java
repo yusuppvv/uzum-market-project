@@ -3,14 +3,9 @@ package com.company.category;
 import com.company.category.DTO.CategoryCr;
 import com.company.category.DTO.CategoryResp;
 import com.company.exception.AppBadRequestException;
-import com.company.product.ProductEntity;
-import com.company.product.ProductRepository;
+import com.company.exception.ItemNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -23,8 +18,6 @@ import java.util.UUID;
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
-    private final ProductRepository productRepository;
-    private final ApplicationArguments applicationArguments;
 
     public ResponseEntity<CategoryResp> create(CategoryCr categoryCr) {
 
@@ -53,12 +46,16 @@ public class CategoryService {
     }
 
     public ResponseEntity<Page<CategoryResp>> getAll(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+
+//        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt"));
+
         List<CategoryResp> list = categoryRepository
                 .findAllByVisibilityTrue(pageable)
                 .stream()
                 .map(this::toDTO)
                 .toList();
+
         return ResponseEntity.ok(
                 new PageImpl<>(list, pageable, list.size())
         );
@@ -88,7 +85,7 @@ public class CategoryService {
 
         CategoryEntity categoryEntity = categoryRepository
                 .findByIdAndVisibilityTrue(id)
-                .orElseThrow();
+                .orElseThrow(ItemNotFoundException::new);
 
         categoryEntity.setVisibility(false);
 
@@ -109,13 +106,6 @@ public class CategoryService {
     private CategoryEntity getCategoryEntityById(UUID id) {
         return categoryRepository
                 .findByIdAndVisibilityTrue(id)
-                .orElseThrow();
-    }
-
-    public ResponseEntity<Page<CategoryResp>> getBySellerId(int page, int size, UUID sellerId) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<ProductEntity> productPage = productRepository.findBySellerId(sellerId, pageable);
-        Page<CategoryResp> categoryRespPage = productPage.map(productEntity -> toDTO(productEntity.getCategory()));
-        return ResponseEntity.ok(categoryRespPage);
+                .orElseThrow(ItemNotFoundException::new);
     }
 }

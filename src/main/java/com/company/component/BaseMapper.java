@@ -23,7 +23,8 @@ public abstract class BaseMapper {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id = UUID.randomUUID();
+    private UUID id;
+    //    private String id = UUID.randomUUID().toString();
     @CreationTimestamp
     private LocalDateTime createdAt;
 

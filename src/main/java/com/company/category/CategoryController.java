@@ -7,7 +7,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -30,14 +29,9 @@ public class CategoryController {
     @GetMapping
     public ResponseEntity<Page<CategoryResp>> getAll(@RequestParam(defaultValue = "0") int page,
                                                      @RequestParam(defaultValue = "10") int size) {
-        return categoryService.getAll(page,size);
+        return categoryService.getAll(page, size);
     }
-    @GetMapping("/get-by-seller-id/{sellerId}")
-    public ResponseEntity<Page<CategoryResp>> getBySellerId(@PathVariable UUID sellerId,
-                                                        @RequestParam(defaultValue = "0") int page,
-                                                     @RequestParam(defaultValue = "10") int size) {
-        return categoryService.getBySellerId(page,size,sellerId);
-    }
+
     @PutMapping("/{id}")
     public ResponseEntity<CategoryResp> update(@PathVariable UUID id, @RequestBody CategoryCr categoryCr) {
         return categoryService.update(id , categoryCr);

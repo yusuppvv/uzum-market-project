@@ -1,74 +1,101 @@
 package com.company.cart;
 
-import com.company.cart.dto.CartCreation;
-import com.company.cart.dto.CartResponse;
-import com.company.exception.BadRequestException;
+import com.company.cart.DTO.CartCr;
+import com.company.cart.DTO.CartResp;
+import com.company.exception.ItemNotFoundException;
+import com.company.product.DTO.ProductCart;
+import com.company.product.DTO.ProductResp;
+import com.company.product.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class CartService {
     private final CartRepository cartRepository;
+    private final ProductService productService;
 
-    public CartResponse add(CartCreation creation) {
-        Optional<CartEntity> optionalCart = cartRepository.findByOrderIdAndVisibilityTrue(creation.getOrderId());
-        if (optionalCart.isPresent()) {
-            throw new BadRequestException("Cart already exists.");
-        }
-        else {
-            CartEntity saved = cartRepository.save(toEntity(creation));
-            return toDto(saved);
-        }
+    public CartResp create(CartCr cartCr) {
+        CartEntity cartEntity = CartEntity
+                .builder()
+                .quantity(cartCr.getQuantity())
+                .userId(cartCr.getUserId())
+                .productId(cartCr.getProductId())
+                .build();
+
+        return toDto(cartRepository.save(cartEntity));
     }
 
-    public List<CartResponse> get() {
-        List<CartEntity> list = cartRepository.findAllByVisibilityTrue();
-        if (list.isEmpty()) {
-            throw new BadRequestException("Cart is empty.");
-        }
-        return list.stream()
+    private CartResp toDto(CartEntity save) {
+        return new CartResp(save.getId(), save.getQuantity(), save.getUserId(), save.getProductId());
+    }
+
+    public CartResp getById(UUID id) {
+        return toDto(cartRepository.findByIdAndVisibilityTrue(id).orElseThrow(ItemNotFoundException::new));
+    }
+
+    public Page<CartResp> getAll(int page, int size) {
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt"));
+
+        List<CartResp> list = cartRepository.findAllByVisibilityTrue(pageable)
+                .stream()
                 .map(this::toDto)
                 .toList();
+
+        return new PageImpl<>(list, pageable, list.size());
     }
 
-    public CartResponse update(CartCreation creation) {
-        Optional<CartEntity> optional = cartRepository.findByUserIdAndVisibilityTrue(creation.getUserId());
-        if (optional.isPresent()) {
-            CartEntity cartEntity = optional.get();
-            cartEntity.setOrderId(creation.getOrderId());
-            cartEntity.setProductId(creation.getProductId());
-            cartEntity.setQuantity(creation.getQuantity());
-            CartEntity saved = cartRepository.save(cartEntity);
-            return toDto(saved);
-        }
-        else {
-            throw new BadRequestException("Cart not found.");
-        }
+    public Page<CartResp> getByUserId(UUID id, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt"));
 
+        List<CartResp> list = cartRepository.findAllByUserIdAndVisibilityTrue(id, pageable)
+                .stream()
+                .map(this::toDto)
+                .toList();
+        return new PageImpl<>(list, pageable, list.size());
+    }
+
+    public CartResp update(UUID id, CartCr cartCr) {
+        CartEntity cartEntity = cartRepository.findByIdAndVisibilityTrue(id).orElseThrow(ItemNotFoundException::new);
+
+        cartEntity.setQuantity(cartCr.getQuantity());
+
+        return toDto(cartRepository.save(cartEntity));
     }
 
     public String delete(UUID id) {
-        Optional<CartEntity> optional = cartRepository.findByIdAndVisibilityTrue(id);
-        if (optional.isPresent()) {
-            optional.get().setVisibility(false);
-            cartRepository.save(optional.get());
-            return "Cart deleted successfully.";
-        }
-        else {
-            throw new BadRequestException("Cart not found.");
-        }
+        CartEntity cartEntity = cartRepository.findByIdAndVisibilityTrue(id).orElseThrow(ItemNotFoundException::new);
+
+        cartEntity.setVisibility(false);
+
+        cartRepository.save(cartEntity);
+        return "deleted";
     }
 
-    private CartResponse toDto(CartEntity saved) {
-        return new CartResponse(saved.getQuantity(), saved.getUserId(), saved.getOrderId(), saved.getProductId());
+    public ProductCart getByCartIdReturnProduct(UUID cartId, UUID userId) {
+
+        CartResp cartResp = getById(cartId);
+
+        ProductResp productResp = productService
+                .getById(cartResp.productId());
+
+        if (cartResp.userId().equals(userId)) {
+            return ProductCart.builder()
+                    .price(productResp.getPrice())
+                    .quantity(cartResp.quantity())
+                    .build();
+        }
+
+        return ProductCart.builder()
+                .price(BigDecimal.ZERO)
+                .quantity(0)
+                .build();
     }
 
-    private CartEntity toEntity(CartCreation creation) {
-        return new CartEntity(creation.getQuantity(), creation.getUserId(), creation.getOrderId() ,creation.getProductId());
-    }
 }

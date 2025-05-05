@@ -1,9 +1,8 @@
 package com.company.users;
 
-import com.company.users.dto.UserCreationDto;
-import com.company.users.dto.UserResponseDto;
+import com.company.users.DTO.UserDto;
+import com.company.users.DTO.UserResp;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,34 +10,34 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/users")
+@RequestMapping("/api/v1/user")
 @RequiredArgsConstructor
 public class UserController {
+
     private final UserService userService;
 
-    @PostMapping("/create")
-    public ResponseEntity<UserResponseDto> create(@RequestBody UserCreationDto userCreationDto) {
-        return ResponseEntity.ok(userService.create(userCreationDto).getBody());
+    @PostMapping("/cteate")
+    public ResponseEntity<?> create(@RequestBody UserDto userDto) {
+        return userService.create(userDto);
     }
 
     @GetMapping("/get-all")
-    public ResponseEntity<Page<UserResponseDto>> get(@RequestParam int page,
-                                                     @RequestParam int size) {
-        return ResponseEntity.ok(userService.getAll(page, size));
+    public ResponseEntity<List<UserResp>> getAll() {
+        return userService.getAll();
     }
 
-    @PutMapping("/update-by-id/{id}")
-    public ResponseEntity<UserResponseDto> update(@PathVariable UUID id, @RequestBody UserCreationDto userCreationDto) {
-        return ResponseEntity.ok(userService.update(id, userCreationDto));
+    @GetMapping("/get-by/{id}")
+    public ResponseEntity<UserResp> getById(@PathVariable UUID id) {
+        return userService.getById(id);
     }
 
-    @DeleteMapping("/delete-by-id/{id}")
-    public ResponseEntity<String> delete(@PathVariable UUID id) {
-        return ResponseEntity.ok(userService.delete(id));
+    @PutMapping("/update/{id}")
+    public ResponseEntity<?> update(@PathVariable UUID id,@RequestBody UserDto userDto) {
+        return userService.update(id, userDto);
     }
 
-
-
-
-
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> delete(@PathVariable UUID id) {
+        return userService.delete(id);
+    }
 }

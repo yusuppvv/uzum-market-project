@@ -1,9 +1,9 @@
 package com.company.product;
 
+import com.company.component.BaseMapper;
 import com.company.photo.PhotoEntity;
 import com.company.cart.CartEntity;
 import com.company.category.CategoryEntity;
-import com.company.component.BaseMapper;
 import com.company.review.ReviewEntity;
 import com.company.users.UserEntity;
 import jakarta.persistence.*;
@@ -22,13 +22,14 @@ import java.util.UUID;
 @Builder
 @Entity(name = "product")
 public class ProductEntity extends BaseMapper {
-
-    //nullable false
+    @Column(nullable = false)
     private String title;
+    @Column(nullable = false)
     private String description;
-    private double price;
+    @Column(nullable = false)
+    private BigDecimal price;
 
-    @Column(columnDefinition = "float4 default 0.0")
+    @Column(nullable = false, columnDefinition = "float4 default 0.0")
     private float rating = 0.0f;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -37,8 +38,9 @@ public class ProductEntity extends BaseMapper {
             updatable = false)
     private UserEntity user;
 
-    @Column(name = "seller_id")
+    @Column(name = "seller_id" , nullable = false)
     private UUID sellerId;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id",
@@ -46,7 +48,8 @@ public class ProductEntity extends BaseMapper {
             updatable = false)
     private CategoryEntity category;
 
-    @Column(name = "category_id")
+
+    @Column(name = "category_id", nullable = false)
     private UUID categoryId;
 
     @OneToMany(mappedBy = "product")
@@ -57,11 +60,5 @@ public class ProductEntity extends BaseMapper {
 
     @OneToMany(mappedBy = "product")
     private List<ReviewEntity> reviews;
-
-    public ProductEntity(String title, String description, double price) {
-        this.title = title;
-        this.description = description;
-        this.price = price;
-    }
 
 }

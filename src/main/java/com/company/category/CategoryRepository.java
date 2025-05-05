@@ -18,9 +18,6 @@ public interface CategoryRepository extends JpaRepository<CategoryEntity , UUID>
 
     Optional<CategoryEntity> findByIdAndVisibilityTrue(UUID id);
 
-
-
-
 //    @Query(nativeQuery = true, value = "select * from category where id = :id and ")
 //    CategoryEntity findByIdAndNameAndVisibilityTrue(UUID id, String name);
 }

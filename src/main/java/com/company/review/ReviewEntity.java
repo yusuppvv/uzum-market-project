@@ -4,16 +4,13 @@ import com.company.component.BaseMapper;
 import com.company.product.ProductEntity;
 import com.company.users.UserEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.Check;
 
 import java.util.UUID;
 
-@Entity
-@Table(name = "review")
+@EqualsAndHashCode(callSuper = true)
+@Entity(name = "review")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -21,16 +18,12 @@ import java.util.UUID;
 @Check(constraints = "rating BETWEEN 1 AND 5")
 public class ReviewEntity extends BaseMapper {
 
+    @Column(nullable = false)
+    private Integer rating;
 
-    private int rating;
+    @Column(nullable = false)
     private String comment;
 
-    public ReviewEntity(int rating, String comment, UUID productId, UUID userId) {
-        this.rating = rating;
-        this.comment = comment;
-        this.productId = productId;
-        this.userId = userId;
-    }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id",
@@ -38,7 +31,7 @@ public class ReviewEntity extends BaseMapper {
             updatable = false)
     private ProductEntity product;
 
-    @Column(name = "product_id")
+    @Column(name = "product_id", nullable = false)
     private UUID productId;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -47,6 +40,6 @@ public class ReviewEntity extends BaseMapper {
             updatable = false)
     private UserEntity user;
 
-    @Column(name = "user_id")
+    @Column(name = "user_id", nullable = false)
     private UUID userId;
 }

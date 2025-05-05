@@ -17,8 +17,6 @@ import java.util.UUID;
 public class PhotoController {
 
     private final PhotoService photoService;
-    private final ProductRepository productRepository;
-
 
     @PostMapping("/upload")
     public ResponseEntity<PhotoResp> upload(@RequestParam MultipartFile file,

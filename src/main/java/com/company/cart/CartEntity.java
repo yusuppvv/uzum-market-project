@@ -5,18 +5,20 @@ import com.company.orders.OrdersEntity;
 import com.company.product.ProductEntity;
 import com.company.users.UserEntity;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
-@EqualsAndHashCode(callSuper = true)
 @Entity(name = "cart")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class CartEntity extends BaseMapper {
-
+    @Column(nullable = false)
     private Integer quantity;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -25,17 +27,9 @@ public class CartEntity extends BaseMapper {
             updatable = false)
     private UserEntity user;
 
-    @Column(name = "user_id")
+    @Column(name = "user_id" , nullable = false)
     private UUID userId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id",
-            insertable = false,
-            updatable = false)
-    private OrdersEntity orders;
-
-    @Column(name = "order_id")
-    private UUID orderId;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id",
@@ -43,13 +37,6 @@ public class CartEntity extends BaseMapper {
             updatable = false)
     private ProductEntity product;
 
-    @Column(name = "product_id")
+    @Column(name = "product_id" , nullable = false)
     private UUID productId;
-
-    public CartEntity(Integer quantity, UUID userId, UUID orderId, UUID productId) {
-        this.quantity = quantity;
-        this.userId = userId;
-        this.orderId = orderId;
-        this.productId = productId;
-    }
 }

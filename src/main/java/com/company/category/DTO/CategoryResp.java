@@ -10,9 +10,4 @@ import java.util.UUID;
 public class CategoryResp {
     private UUID id;
     private String name;
-
-    public CategoryResp(UUID id, String name) {
-        this.id = id;
-        this.name = name;
-    }
 }

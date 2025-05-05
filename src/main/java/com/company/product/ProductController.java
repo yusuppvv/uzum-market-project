@@ -1,7 +1,11 @@
 package com.company.product;
 
-import com.company.product.dto.ProductCreationDto;
-import com.company.product.dto.ProductResponseDto;
+import com.company.product.DTO.ProductCr;
+import com.company.product.DTO.ProductResp;
+import com.company.product.DTO.ProductUpdate;
+import com.company.review.DTO.ReviewResp;
+import com.company.review.DTO.ReviewsCr;
+import com.company.review.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -11,53 +15,72 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/api/v1/product")
+@RequiredArgsConstructor
 public class ProductController {
-
     private final ProductService productService;
+    private final ReviewService reviewService;
+
+
+    @PostMapping("/create-review")
+    public ResponseEntity<ReviewResp> ReviewCreate(@RequestBody ReviewsCr reviewsCr) {
+        return ResponseEntity.ok(reviewService.create(reviewsCr));
+    }
+
+
+    @PutMapping("/update-review")
+    public ResponseEntity<ReviewResp> update(@RequestBody ReviewsCr reviewsCr) {
+        return ResponseEntity.ok(reviewService.update(reviewsCr));
+    }
+
 
     @PostMapping
-    public ResponseEntity<ProductResponseDto> create(@RequestBody ProductCreationDto productCreationDto) {
-        return ResponseEntity.ok(productService.createProduct(productCreationDto));
+    public ResponseEntity<ProductResp> create(@RequestBody ProductCr productCr){
+        return ResponseEntity.ok(productService.create(productCr));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ProductResp> getById(@PathVariable UUID id){
+        return ResponseEntity.ok(productService.getById(id));
     }
 
     @GetMapping("/get-all")
-    public ResponseEntity<Page<ProductResponseDto>> getAllProduct(@RequestParam (defaultValue = "0") int page,
-                                                                  @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(productService.getAllProduct(page, size));
+    public ResponseEntity<Page<ProductResp>> getAll(@RequestParam(defaultValue = "0") int page,
+                                                    @RequestParam(defaultValue = "10") int size){
+        return ResponseEntity.ok(productService.getAll(page, size));
     }
 
-    @GetMapping("/get-by-seller/{sellerId}")
-    public ResponseEntity<Page<ProductResponseDto>> getBySellerId(@PathVariable UUID sellerId,
-                                                @RequestParam(defaultValue = "0") int page,
-                                                @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(productService.getBySellerId(sellerId, page, size));
+    @GetMapping("/category/{categoryId}")
+    public ResponseEntity<Page<ProductResp>> getAllByCategoryId(@PathVariable UUID categoryId,
+                                                                @RequestParam(defaultValue = "0") int page,
+                                                                @RequestParam(defaultValue = "10") int size){
+        return ResponseEntity.ok(productService.getAllByCategoryId(categoryId, page,size));
     }
 
-    @GetMapping("/search")
-    public ResponseEntity<Page<ProductResponseDto>> searchByTitle(@RequestParam String title,
-                                                                  @RequestParam(defaultValue = "0") int page,
-                                                                  @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(productService.searchByTitle(title, page, size));
+    @GetMapping("/seller/{sellerId}")
+    public ResponseEntity<Page<ProductResp>> getAllBySellerId(@PathVariable UUID sellerId,
+                                                                @RequestParam(defaultValue = "0") int page,
+                                                                @RequestParam(defaultValue = "10") int size){
+        return ResponseEntity.ok(productService.getAllBySellerId(sellerId, page,size));
     }
 
-    @GetMapping("/get-by-range")
-    public ResponseEntity<Page<ProductResponseDto>> getByRange(@RequestParam double minPrice,
-                                                               @RequestParam double maxPrice,
-                                                               @RequestParam(defaultValue = "0") int page,
-                                                               @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(productService.getByRange(minPrice, maxPrice, page, size));
+    @GetMapping("/price-range")
+    public ResponseEntity<Page<ProductResp>> getAllByPriceRange(@RequestParam(defaultValue = "0") int page,
+                                                                @RequestParam(defaultValue = "10") int size){
+        return ResponseEntity.ok(productService.getAllByPriceRange(page ,size));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProductResponseDto> updateProduct(@PathVariable UUID id,
-                                                            @RequestBody ProductCreationDto product) {
-        return ResponseEntity.ok(productService.updateProduct(id ,product));
+    public ResponseEntity<ProductResp> update(@PathVariable UUID id, @RequestBody ProductUpdate productUpdate){
+        return ResponseEntity.ok(productService.update(id, productUpdate));
     }
 
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> delete(@PathVariable UUID id) {
-        return ResponseEntity.ok(productService.deleteById(id));
+    public ResponseEntity<String> delete(@PathVariable UUID id){
+        return ResponseEntity.ok(productService.delete(id));
     }
+
+
+
 }

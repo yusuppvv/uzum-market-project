@@ -21,22 +21,20 @@ import java.util.List;
 @Entity
 @Table(name = "users")
 public class UserEntity extends BaseMapper {
-    
+
     @Column(nullable = false)
     private String fullName;
     @Column(unique = true, nullable = false)
     private String email;
 
-    public UserEntity(String fullName, String email) {
-        this.fullName = fullName;
-        this.email = email;
-    }
-
+    @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private Status status;
 
+    @Column(nullable = false )
     @Enumerated(value = EnumType.STRING)
     private Role role;
+
 
     @OneToMany(mappedBy = "user")
     private List<DeliveryEntity> delivery;
@@ -49,6 +47,7 @@ public class UserEntity extends BaseMapper {
 
     @OneToMany(mappedBy = "user")
     private List<CartEntity> carts;
+
     @OneToMany(mappedBy = "user")
     private List<ReviewEntity> reviews;
 }

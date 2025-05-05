@@ -1,17 +1,14 @@
 package com.company.orders;
 
-import com.company.cart.CartEntity;
 import com.company.component.BaseMapper;
 import com.company.users.UserEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-import java.util.List;
+import java.math.BigDecimal;
 import java.util.UUID;
 
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Data
 @AllArgsConstructor
@@ -19,9 +16,11 @@ import java.util.UUID;
 @Builder
 @Table(name = "orders")
 public class OrdersEntity extends BaseMapper {
-
-    private double totalPrice;
+    @Column(nullable = false)
+    private BigDecimal totalPrice;
+    @Column(nullable = false)
     private Status status;
+    @Column(nullable = false)
     private Type type;
 
 
@@ -31,9 +30,7 @@ public class OrdersEntity extends BaseMapper {
             updatable = false)
     private UserEntity user;
 
-    @Column(name = "user_id")
+    @Column(name = "user_id", nullable = false)
     private UUID userId;
 
-    @OneToMany(mappedBy = "orders")
-    private List<CartEntity> carts;
 }

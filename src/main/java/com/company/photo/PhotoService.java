@@ -6,10 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static java.util.stream.Collectors.toList;
 
@@ -80,6 +77,16 @@ public class PhotoService {
         return Arrays.stream(files)
                 .map(file -> upload(file, productId))
                 .collect(toList());
+//
+//        List<PhotoResp> photoResps = new ArrayList<>();
+//
+//        for (MultipartFile file : files) {
+//
+//            PhotoResp uploaded = upload(file, productId);
+//            photoResps.add(uploaded);
+//        }
+//
+//        return photoResps;
     }
 
     public byte[] searchPhotosByName(String name) {

@@ -1,13 +1,11 @@
 package com.company.users;
 
-import com.company.exception.AppBadRequestException;
-import com.company.users.dto.UserCreationDto;
-import com.company.users.dto.UserResponseDto;
+import com.company.exception.BadRequestException;
+import com.company.exception.ItemNotFoundException;
+import com.company.users.DTO.UserDto;
+import com.company.users.DTO.UserResp;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -18,47 +16,80 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class UserService {
+
     private final UserRepository userRepository;
 
-    public ResponseEntity<UserResponseDto> create(UserCreationDto userCreationDto) {
-        Optional<UserEntity> optionalUser = userRepository.findByFullNameOrEmail(userCreationDto.getFullName(), userCreationDto.getEmail());
-        if (optionalUser.isPresent()) {
-            throw new AppBadRequestException("User already exists");
+    public ResponseEntity<?> create(UserDto userDto) {
+        Optional<UserEntity> byEmail =
+                userRepository.findByEmail(userDto.getEmail());
+        if (byEmail.isPresent()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email already exists");
         }
-        else {
-            UserEntity save = userRepository.save(new UserEntity(userCreationDto.getFullName(), userCreationDto.getEmail()));
-            return ResponseEntity.ok(new UserResponseDto(save.getId(), save.getFullName(), save.getEmail()));
-        }
+
+        UserEntity userEntity= UserEntity
+                .builder()
+                .fullName(userDto.getFullName())
+                .email(userDto.getEmail())
+                .role(Role.USER)
+                .status(Status.ACTIVE)
+                .build();
+
+        UserEntity save = userRepository.save(userEntity);
+
+        return ResponseEntity.ok(UserResp
+                .builder()
+                        .id(userEntity.getId())
+                        .email(save.getEmail())
+                        .fullName(save.getFullName())
+                .build());
     }
 
-    public Page<UserResponseDto> getAll(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        List<UserResponseDto> list = userRepository
-                .findAllByVisibilityIsTrue(pageable)
-                .stream()
-                .map(userEntity -> new UserResponseDto(userEntity.getId(), userEntity.getFullName(), userEntity.getEmail()))
-                .toList();
-        return new PageImpl<>(list, pageable, list.size());
+    public ResponseEntity<List<UserResp>> getAll() {
+        return ResponseEntity.ok(
+                userRepository.findAll()
+                        .stream()
+                        .map(u -> changeUserResp(u))
+                        .toList()
+        );
     }
 
-    public UserResponseDto update(UUID id, UserCreationDto userCreationDto) {
-        Optional<UserEntity> byId = userRepository.findByIdAndVisibilityIsTrue(id);
-        if (byId.isPresent()) {
-            UserEntity userEntity = byId.get();
-            userEntity.setFullName(userCreationDto.getFullName());
-            userEntity.setEmail(userCreationDto.getEmail());
-            userRepository.save(userEntity);
-            return new UserResponseDto(userEntity.getId(), userEntity.getFullName(), userEntity.getEmail());
-        }
-        else throw new AppBadRequestException("User not found by this id.");
+
+
+    public ResponseEntity<UserResp> getById(UUID id) {
+        UserEntity userEntity = userRepository.findById(id).orElseThrow(ItemNotFoundException::new);
+
+        return ResponseEntity.ok(changeUserResp(userEntity));
     }
 
-    public String delete(UUID id) {
-        Optional<UserEntity> byId = userRepository.findByIdAndVisibilityIsTrue(id);
-        if (byId.isPresent()) {
-            byId.get().setVisibility(false);
-            return "User deleted successfully";
+    public ResponseEntity<?> update(UUID id, UserDto userDto) {
+        UserEntity userEntity = userRepository.findById(id).orElseThrow(ItemNotFoundException::new);
+
+        Optional<UserEntity> byEmail = userRepository.findByEmail(userDto.getEmail());
+        if (byEmail.isPresent()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("bu gmail ishlatilgan");
         }
-        else return "User not found by this id.";
+
+        userEntity.setFullName(userDto.getFullName());
+        userEntity.setEmail(userDto.getEmail());
+
+        UserEntity save = userRepository.save(userEntity);
+
+        return ResponseEntity.ok(changeUserResp(save));
+    }
+
+    public ResponseEntity<?> delete(UUID id) {
+        userRepository.findById(id).orElseThrow(ItemNotFoundException::new);
+
+        userRepository.deleteById(id);
+
+        return ResponseEntity.ok("Sucsess");
+    }
+
+    private UserResp changeUserResp(UserEntity userEntity) {
+        return UserResp.builder()
+                .fullName(userEntity.getFullName())
+                .email(userEntity.getEmail())
+                .id(userEntity.getId())
+                .build();
     }
 }
