@@ -3,6 +3,7 @@ package com.company.category;
 import com.company.category.DTO.CategoryCr;
 import com.company.category.DTO.CategoryResp;
 import com.company.component.ApiResponse;
+import com.company.component.Companents;
 import com.company.exception.AppBadRequestException;
 import com.company.exception.ItemNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -49,7 +50,7 @@ public class CategoryService {
     public ResponseEntity<ApiResponse<Page<CategoryResp>>> getAll(int page, int size) {
 
 //        Pageable pageable = PageRequest.of(page, size);
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt"));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Companents.CREATED_AT));
 
         List<CategoryResp> list = categoryRepository
                 .findAllByVisibilityTrue(pageable)
@@ -93,7 +94,7 @@ public class CategoryService {
 
         categoryRepository.save(categoryEntity);
 
-        return ResponseEntity.ok(new ApiResponse<>("Deleted"));
+        return ResponseEntity.ok(new ApiResponse<>(Companents.DELETED));
     }
 
     private CategoryResp toDTO(CategoryEntity categoryEntity) {
