@@ -18,43 +18,47 @@ import java.sql.SQLException;
 public class CustomExceptionHandler {
 
     @ExceptionHandler(ItemNotFoundException.class)
-    public ResponseEntity<?> handlerItemNotFoundException(ItemNotFoundException e) {
+    public ResponseEntity<ApiResponse<String>> handlerItemNotFoundException(ItemNotFoundException e) {
         log.error(e.getMessage());
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
-                .body("Item Not Found!!!");
+                .body(new ApiResponse<>(400, e.getMessage() , null));
     }
     @ExceptionHandler(BadRequestException.class)
-    public ResponseEntity<?> handlerBadRequestException(BadRequestException e) {
+    public ResponseEntity<ApiResponse<String>> handlerBadRequestException(BadRequestException e) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(e.getMessage());
+                .body(new ApiResponse<>(400, e.getMessage() , null));
     }
 
     @ExceptionHandler(SQLException.class)
-    public ResponseEntity<?> handlerPSQLException(ItemNotFoundException e) {
+    public ResponseEntity<ApiResponse<String>> handlerPSQLException(ItemNotFoundException e) {
         return ResponseEntity
                 .status(HttpStatus.NOT_ACCEPTABLE)
-                .body(e.getMessage());
+                .body(new ApiResponse<>(400, e.getMessage() , null));
     }
 
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<?> handlerException(Exception e) {
+    public ResponseEntity<ApiResponse<String>> handlerException(Exception e) {
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(e.getMessage());
+                .body(new ApiResponse<>(400, e.getMessage() , null));
+
     }
 
     @ExceptionHandler(AppBadRequestException.class)
-    public ResponseEntity<?> handlerException(AppBadRequestException e) {
+    public ResponseEntity<ApiResponse<String>> handlerException(AppBadRequestException e) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(e.getMessage());
+                .body(
+                        new ApiResponse<>(400, e.getMessage() , null)
+                );
+
     }
 
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<?> handlerException(RuntimeException e) {
+    public ResponseEntity<ApiResponse<String>> handlerException(RuntimeException e) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(
