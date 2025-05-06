@@ -1,15 +1,18 @@
 package com.company.orders;
 
 import com.company.cart.CartService;
+import com.company.component.ApiResponse;
 import com.company.exception.ItemNotFoundException;
 import com.company.orders.DTO.OrderUpdate;
 import com.company.orders.DTO.OrdersCr;
 import com.company.orders.DTO.OrdersResp;
 import com.company.product.DTO.ProductCart;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.annotation.Order;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
+import java.io.StringReader;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
@@ -25,7 +28,7 @@ public class OrdersService {
     private final OrdersRepository ordersRepository;
     private final CartService cartService;
 
-    public OrdersResp create(OrdersCr ordersCr) {
+    public ApiResponse<OrdersResp> create(OrdersCr ordersCr) {
 
         BigDecimal total = BigDecimal.ZERO;
 
@@ -51,18 +54,18 @@ public class OrdersService {
                 .userId(ordersCr.getUserId())
                 .build();
 
-        return toDto(ordersRepository.save(ordersEntity));
+        return new ApiResponse<>(toDto(ordersRepository.save(ordersEntity)));
     }
 
     private OrdersResp toDto(OrdersEntity orders) {
         return new OrdersResp(orders.getId(),orders.getTotalPrice(), orders.getStatus(), orders.getType(), orders.getUserId());
     }
 
-    public OrdersResp getById(UUID id) {
-        return toDto(ordersRepository.findByIdAndVisibilityTrue(id).orElseThrow(ItemNotFoundException::new));
+    public ApiResponse<OrdersResp> getById(UUID id) {
+        return new ApiResponse<>(toDto(ordersRepository.findByIdAndVisibilityTrue(id).orElseThrow(ItemNotFoundException::new)));
     }
 
-    public Page<OrdersResp> getAll(int page, int size) {
+    public ApiResponse<Page<OrdersResp>> getAll(int page, int size) {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt"));
 
@@ -70,10 +73,10 @@ public class OrdersService {
                 .map(this::toDto)
                 .toList();
 
-        return new PageImpl<>(list, pageable, list.size());
+        return new ApiResponse<>(new PageImpl<>(list, pageable, list.size()));
     }
 
-    public Page<OrdersResp> getByUserId(UUID userId, int page, int size) {
+    public ApiResponse<Page<OrdersResp>> getByUserId(UUID userId, int page, int size) {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt"));
 
@@ -81,10 +84,10 @@ public class OrdersService {
                 .map(this::toDto)
                 .toList();
 
-        return new PageImpl<>(list, pageable, list.size());
+        return new ApiResponse<>(new PageImpl<>(list, pageable, list.size()));
     }
 
-    public OrdersResp update(UUID id, OrderUpdate orderUpdate) {
+    public ApiResponse<OrdersResp> update(UUID id, OrderUpdate orderUpdate) {
         OrdersEntity ordersEntity = ordersRepository.
                 findByIdAndVisibilityTrue(id)
                 .orElseThrow(ItemNotFoundException::new);
@@ -103,19 +106,19 @@ public class OrdersService {
         ordersEntity.setType(orderUpdate.getType());
         ordersEntity.setStatus(orderUpdate.getStatus());
 
-        return toDto(ordersRepository.save(ordersEntity));
+        return new ApiResponse<>(toDto(ordersRepository.save(ordersEntity)));
     }
 
-    public String delete(UUID id) {
+    public ApiResponse<String> delete(UUID id) {
         OrdersEntity ordersEntity = ordersRepository.findByIdAndVisibilityTrue(id).orElseThrow(ItemNotFoundException::new);
 
         ordersEntity.setVisibility(false);
 
         ordersRepository.save(ordersEntity);
-        return "Deleted";
+        return new ApiResponse<>("Deleted");
     }
 
-    public OrdersResp update(UUID id, Type type) {
+    public ApiResponse<OrdersResp> update(UUID id, Type type) {
 
         OrdersEntity ordersEntity = ordersRepository
                 .findByIdAndVisibilityTrue(id)
@@ -126,6 +129,6 @@ public class OrdersService {
 
         ordersRepository.save(ordersEntity);
 
-        return toDto(ordersEntity);
+        return new ApiResponse<>(toDto(ordersEntity));
     }
 }
