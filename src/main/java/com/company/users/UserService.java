@@ -1,6 +1,7 @@
 package com.company.users;
 
 import com.company.component.ApiResponse;
+import com.company.component.Companents;
 import com.company.exception.ItemNotFoundException;
 import com.company.users.DTO.UserDto;
 import com.company.users.DTO.UserResp;
@@ -85,7 +86,7 @@ public class UserService {
         UserEntity userEntity = userRepository.findById(id).orElseThrow(ItemNotFoundException::new);
         userEntity.setVisibility(false);
         userRepository.save(userEntity);
-        return new ApiResponse<>("Successfully deleted!");
+        return new ApiResponse<>(Companents.DELETED);
     }
 
     private UserResp toDto(UserEntity userEntity) {

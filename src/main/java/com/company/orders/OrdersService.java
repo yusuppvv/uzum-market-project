@@ -2,6 +2,7 @@ package com.company.orders;
 
 import com.company.cart.CartService;
 import com.company.component.ApiResponse;
+import com.company.component.Companents;
 import com.company.exception.ItemNotFoundException;
 import com.company.orders.DTO.OrderUpdate;
 import com.company.orders.DTO.OrdersCr;
@@ -67,7 +68,7 @@ public class OrdersService {
 
     public ApiResponse<Page<OrdersResp>> getAll(int page, int size) {
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt"));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Companents.CREATED_AT));
 
         List<OrdersResp> list = ordersRepository.findAllByVisibilityTrue(pageable).stream()
                 .map(this::toDto)
@@ -78,7 +79,7 @@ public class OrdersService {
 
     public ApiResponse<Page<OrdersResp>> getByUserId(UUID userId, int page, int size) {
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt"));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Companents.CREATED_AT));
 
         List<OrdersResp> list = ordersRepository.findAllByUserIdAndVisibilityTrue(userId,pageable).stream()
                 .map(this::toDto)
@@ -115,7 +116,7 @@ public class OrdersService {
         ordersEntity.setVisibility(false);
 
         ordersRepository.save(ordersEntity);
-        return new ApiResponse<>("Deleted");
+        return new ApiResponse<>(Companents.DELETED);
     }
 
     public ApiResponse<OrdersResp> update(UUID id, Type type) {

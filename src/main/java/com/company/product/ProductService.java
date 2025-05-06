@@ -1,6 +1,7 @@
 package com.company.product;
 
 import com.company.component.ApiResponse;
+import com.company.component.Companents;
 import com.company.exception.ItemNotFoundException;
 import com.company.product.DTO.ProductCr;
 import com.company.product.DTO.ProductResp;
@@ -39,7 +40,7 @@ public class ProductService {
 
     public ApiResponse<Page<ProductResp>> getAll(int page, int size) {
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt"));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Companents.CREATED_AT));
         List<ProductResp> list = productRepository.findAllByVisibilityTrue(pageable)
                 .stream()
                 .map(this::toDto)
@@ -64,11 +65,11 @@ public class ProductService {
         productEntity.setVisibility(false);
 
         productRepository.save(productEntity);
-        return new ApiResponse<>("Deleted");
+        return new ApiResponse<>(Companents.DELETED);
     }
 
     public ApiResponse<Page<ProductResp>> getAllByCategoryId(UUID categoryId, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt"));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Companents.CREATED_AT));
 
         List<ProductResp> list = productRepository.findByCategoryIdAndVisibilityTrue(categoryId , pageable)
                 .stream()
@@ -79,7 +80,7 @@ public class ProductService {
     }
 
     public ApiResponse<Page<ProductResp>> getAllBySellerId(UUID sellerId, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt"));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Companents.CREATED_AT));
 
         List<ProductResp> list = productRepository.findBySellerIdAndVisibilityTrue(sellerId , pageable)
                 .stream()
@@ -107,7 +108,7 @@ public class ProductService {
     }
 
     public ApiResponse<Page<ProductResp>> getAllByPriceRange(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt"));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Companents.CREATED_AT));
         List<ProductResp> list = productRepository.findAllByOrderByPriceAsc(pageable)
                 .stream()
                 .map(this::toDto)

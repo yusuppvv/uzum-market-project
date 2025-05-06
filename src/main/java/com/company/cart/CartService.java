@@ -3,6 +3,7 @@ package com.company.cart;
 import com.company.cart.DTO.CartCr;
 import com.company.cart.DTO.CartResp;
 import com.company.component.ApiResponse;
+import com.company.component.Companents;
 import com.company.exception.ItemNotFoundException;
 import com.company.product.DTO.ProductCart;
 import com.company.product.DTO.ProductResp;
@@ -42,7 +43,7 @@ public class CartService {
 
     public ApiResponse<Page<CartResp>> getAll(int page, int size) {
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt"));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Companents.CREATED_AT));
 
         List<CartResp> list = cartRepository.findAllByVisibilityTrue(pageable)
                 .stream()
@@ -53,7 +54,7 @@ public class CartService {
     }
 
     public ApiResponse<Page<CartResp>> getByUserId(UUID id, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt"));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Companents.CREATED_AT));
 
         List<CartResp> list = cartRepository.findAllByUserIdAndVisibilityTrue(id, pageable)
                 .stream()
@@ -77,7 +78,7 @@ public class CartService {
 
         cartRepository.save(cartEntity);
 
-        return new ApiResponse<>("Success");
+        return new ApiResponse<>(Companents.SUCCESS);
     }
 
     public ProductCart getByCartIdReturnProduct(UUID cartId, UUID userId) {

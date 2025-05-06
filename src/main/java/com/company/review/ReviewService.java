@@ -1,6 +1,7 @@
 package com.company.review;
 
 import com.company.component.ApiResponse;
+import com.company.component.Companents;
 import com.company.exception.BadRequestException;
 import com.company.exception.ItemNotFoundException;
 import com.company.review.DTO.ReviewsCr;
@@ -60,7 +61,7 @@ public class ReviewService {
 
         reviewRepository.save(reviewEntity);
 
-        return new ApiResponse<>("Review deleted successfully");
+        return new ApiResponse<>(Companents.DELETED);
     }
 
     public ApiResponse<ReviewResp> update(ReviewsCr reviewsCr) {

@@ -1,6 +1,7 @@
 package com.company.photo;
 
 import com.company.component.ApiResponse;
+import com.company.component.Companents;
 import com.company.exception.ItemNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -37,7 +38,7 @@ public class PhotoService {
 
     public ApiResponse<String> deleteById(UUID id) {
         photoRepository.deleteById(id);
-        return new ApiResponse<>("Photo with id: " + id + " deleted successfully");
+        return new ApiResponse<>("Photo with id: " + id + Companents.DELETED);
     }
 
     public ApiResponse<PhotoResp> metadata(UUID id) {
