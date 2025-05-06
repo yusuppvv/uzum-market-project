@@ -3,8 +3,8 @@ package com.company.cart;
 import com.company.cart.DTO.CartCr;
 import com.company.cart.DTO.CartResp;
 import com.company.component.ApiResponse;
-import com.company.component.Companents;
-import com.company.exception.ItemNotFoundException;
+import com.company.component.Components;
+import com.company.exception.classes.ItemNotFoundException;
 import com.company.product.DTO.ProductCart;
 import com.company.product.DTO.ProductResp;
 import com.company.product.ProductService;
@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -43,7 +42,7 @@ public class CartService {
 
     public ApiResponse<Page<CartResp>> getAll(int page, int size) {
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Companents.CREATED_AT));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Components.CREATED_AT));
 
         List<CartResp> list = cartRepository.findAllByVisibilityTrue(pageable)
                 .stream()
@@ -54,7 +53,7 @@ public class CartService {
     }
 
     public ApiResponse<Page<CartResp>> getByUserId(UUID id, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Companents.CREATED_AT));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Components.CREATED_AT));
 
         List<CartResp> list = cartRepository.findAllByUserIdAndVisibilityTrue(id, pageable)
                 .stream()
@@ -78,7 +77,7 @@ public class CartService {
 
         cartRepository.save(cartEntity);
 
-        return new ApiResponse<>(Companents.SUCCESS);
+        return new ApiResponse<>(Components.DELETED);
     }
 
     public ProductCart getByCartIdReturnProduct(UUID cartId, UUID userId) {

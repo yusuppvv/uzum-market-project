@@ -3,9 +3,9 @@ package com.company.category;
 import com.company.category.DTO.CategoryCr;
 import com.company.category.DTO.CategoryResp;
 import com.company.component.ApiResponse;
-import com.company.component.Companents;
-import com.company.exception.AppBadRequestException;
-import com.company.exception.ItemNotFoundException;
+import com.company.component.Components;
+import com.company.exception.classes.AppBadRequestException;
+import com.company.exception.classes.ItemNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.http.ResponseEntity;
@@ -50,7 +50,7 @@ public class CategoryService {
     public ResponseEntity<ApiResponse<Page<CategoryResp>>> getAll(int page, int size) {
 
 //        Pageable pageable = PageRequest.of(page, size);
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Companents.CREATED_AT));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Components.CREATED_AT));
 
         List<CategoryResp> list = categoryRepository
                 .findAllByVisibilityTrue(pageable)
@@ -73,7 +73,7 @@ public class CategoryService {
                 .findByNameAndVisibilityTrue(categoryCr.getName());
 
         if (byNameAndVisibilityTrue.isPresent()) {
-            throw  new AppBadRequestException("Item Already Exisits!!!");
+            throw new AppBadRequestException(Components.ALREADY_EXISTS);
         }
 
         categoryEntity.setName(categoryCr.getName());
@@ -94,7 +94,7 @@ public class CategoryService {
 
         categoryRepository.save(categoryEntity);
 
-        return ResponseEntity.ok(new ApiResponse<>(Companents.DELETED));
+        return ResponseEntity.ok(new ApiResponse<>(Components.DELETED));
     }
 
     private CategoryResp toDTO(CategoryEntity categoryEntity) {

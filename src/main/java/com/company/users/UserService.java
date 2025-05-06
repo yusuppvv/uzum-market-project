@@ -1,13 +1,12 @@
 package com.company.users;
 
 import com.company.component.ApiResponse;
-import com.company.component.Companents;
-import com.company.exception.ItemNotFoundException;
+import com.company.component.Components;
+import com.company.exception.classes.ItemNotFoundException;
 import com.company.users.DTO.UserDto;
 import com.company.users.DTO.UserResp;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -86,7 +85,7 @@ public class UserService {
         UserEntity userEntity = userRepository.findById(id).orElseThrow(ItemNotFoundException::new);
         userEntity.setVisibility(false);
         userRepository.save(userEntity);
-        return new ApiResponse<>(Companents.DELETED);
+        return new ApiResponse<>(Components.DELETED);
     }
 
     private UserResp toDto(UserEntity userEntity) {

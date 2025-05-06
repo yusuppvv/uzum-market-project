@@ -1,9 +1,9 @@
 package com.company.review;
 
 import com.company.component.ApiResponse;
-import com.company.component.Companents;
-import com.company.exception.BadRequestException;
-import com.company.exception.ItemNotFoundException;
+import com.company.component.Components;
+import com.company.exception.classes.BadRequestException;
+import com.company.exception.classes.ItemNotFoundException;
 import com.company.review.dto.ReviewsCr;
 import com.company.review.dto.ReviewResp;
 import lombok.RequiredArgsConstructor;
@@ -61,7 +61,7 @@ public class ReviewService {
 
         reviewRepository.save(reviewEntity);
 
-        return new ApiResponse<>(Companents.DELETED);
+        return new ApiResponse<>(Components.DELETED);
     }
 
     public ApiResponse<ReviewResp> update(ReviewsCr reviewsCr) {

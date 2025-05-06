@@ -1,4 +1,4 @@
-package com.company.exception;
+package com.company.exception.classes;
 
 public class ReviewNotFoundException extends RuntimeException {
     public ReviewNotFoundException(String message) {

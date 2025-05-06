@@ -1,6 +1,6 @@
 package com.company.exception.handler;
 
-import com.company.exception.ItemNotFoundException;
+import com.company.exception.classes.ItemNotFoundException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;

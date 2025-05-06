@@ -2,9 +2,9 @@ package com.company.exception.handler;
 
 
 import com.company.component.ApiResponse;
-import com.company.exception.AppBadRequestException;
-import com.company.exception.BadRequestException;
-import com.company.exception.ItemNotFoundException;
+import com.company.exception.classes.AppBadRequestException;
+import com.company.exception.classes.BadRequestException;
+import com.company.exception.classes.ItemNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

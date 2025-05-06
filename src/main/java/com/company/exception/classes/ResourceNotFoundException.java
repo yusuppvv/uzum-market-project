@@ -1,4 +1,4 @@
-package com.company.exception;
+package com.company.exception.classes;
 
 
 import org.springframework.web.bind.annotation.ResponseStatus;

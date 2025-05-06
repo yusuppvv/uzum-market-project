@@ -2,18 +2,16 @@ package com.company.orders;
 
 import com.company.cart.CartService;
 import com.company.component.ApiResponse;
-import com.company.component.Companents;
-import com.company.exception.ItemNotFoundException;
+import com.company.component.Components;
+import com.company.exception.classes.ItemNotFoundException;
 import com.company.orders.DTO.OrderUpdate;
 import com.company.orders.DTO.OrdersCr;
 import com.company.orders.DTO.OrdersResp;
 import com.company.product.DTO.ProductCart;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.annotation.Order;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
-import java.io.StringReader;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
@@ -68,7 +66,7 @@ public class OrdersService {
 
     public ApiResponse<Page<OrdersResp>> getAll(int page, int size) {
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Companents.CREATED_AT));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Components.CREATED_AT));
 
         List<OrdersResp> list = ordersRepository.findAllByVisibilityTrue(pageable).stream()
                 .map(this::toDto)
@@ -79,7 +77,7 @@ public class OrdersService {
 
     public ApiResponse<Page<OrdersResp>> getByUserId(UUID userId, int page, int size) {
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Companents.CREATED_AT));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Components.CREATED_AT));
 
         List<OrdersResp> list = ordersRepository.findAllByUserIdAndVisibilityTrue(userId,pageable).stream()
                 .map(this::toDto)
@@ -116,7 +114,7 @@ public class OrdersService {
         ordersEntity.setVisibility(false);
 
         ordersRepository.save(ordersEntity);
-        return new ApiResponse<>(Companents.DELETED);
+        return new ApiResponse<>(Components.DELETED);
     }
 
     public ApiResponse<OrdersResp> update(UUID id, Type type) {
