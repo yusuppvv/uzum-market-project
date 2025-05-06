@@ -76,6 +76,7 @@ public class CartService {
         cartEntity.setVisibility(false);
 
         cartRepository.save(cartEntity);
+
         return new ApiResponse<>("Success");
     }
 
@@ -85,7 +86,7 @@ public class CartService {
                 .orElseThrow(ItemNotFoundException::new);
 
         ProductResp productResp = productService
-                .getById(cartEntity.getProductId());
+                .getById(cartEntity.getProductId()).getData();
 
         return ProductCart.builder()
                 .price(productResp.getPrice())
