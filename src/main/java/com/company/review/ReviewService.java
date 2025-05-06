@@ -1,5 +1,6 @@
 package com.company.review;
 
+import com.company.component.ApiResponse;
 import com.company.exception.BadRequestException;
 import com.company.exception.ItemNotFoundException;
 import com.company.review.DTO.ReviewsCr;
@@ -16,11 +17,11 @@ import java.util.UUID;
 public class ReviewService {
     private final ReviewRepository reviewRepository;
 
-    public ReviewResp create(ReviewsCr reviewsCr) {
+    public ApiResponse<ReviewResp> create(ReviewsCr reviewsCr) {
 
         Optional<ReviewEntity> optional = reviewRepository.findByUserIdAndProductIdAndVisibilityTrue(reviewsCr.getUserId(), reviewsCr.getProductId());
         if (optional.isPresent()) {
-            throw new BadRequestException("mazgi faqat birmarta qila olasan");
+            throw new BadRequestException("You already reviewed this product");
         }
 
 
@@ -31,50 +32,47 @@ public class ReviewService {
                 .userId(reviewsCr.getUserId())
                 .productId(reviewsCr.getProductId())
                 .build();
-
-        System.out.println(reviewsCr);
-
-        return toDto(reviewRepository.save(reviewEntity));
+        return new ApiResponse<>(toDto(reviewRepository.save(reviewEntity)));
     }
 
 
 
-    public ReviewResp findById(UUID id) {
-        return toDto(reviewRepository.findByIdAndVisibilityTrue(id).orElseThrow(ItemNotFoundException::new));
+    public ApiResponse<ReviewResp> findById(UUID id) {
+        return new ApiResponse<>(toDto(reviewRepository.findByIdAndVisibilityTrue(id).orElseThrow(ItemNotFoundException::new)));
     }
 
-    public List<ReviewResp> findByProduct(UUID id) {
-        return reviewRepository.findAllByProductIdAndVisibilityTrue(id).stream()
+    public ApiResponse<List<ReviewResp>> findByProduct(UUID id) {
+        return new ApiResponse<>(reviewRepository.findAllByProductIdAndVisibilityTrue(id).stream()
                 .map(this::toDto)
-                .toList();
+                .toList());
     }
 
-    public List<ReviewResp> findByUser(UUID id) {
-        return reviewRepository.findAllByUserIdAndVisibilityTrue(id).stream()
+    public ApiResponse<List<ReviewResp>> findByUser(UUID id) {
+        return new ApiResponse<>(reviewRepository.findAllByUserIdAndVisibilityTrue(id).stream()
                 .map(this::toDto)
-                .toList();
+                .toList());
     }
 
-    public String delete(UUID id) {
+    public ApiResponse<String> delete(UUID id) {
         ReviewEntity reviewEntity = reviewRepository.findByIdAndVisibilityTrue(id).orElseThrow(ItemNotFoundException::new);
 
         reviewEntity.setVisibility(false);
 
         reviewRepository.save(reviewEntity);
 
-        return "Deleted";
+        return new ApiResponse<>("Review deleted successfully");
     }
 
-    private ReviewResp toDto(ReviewEntity reviewEntity) {
-        return new ReviewResp(reviewEntity.getRating(), reviewEntity.getComment(), reviewEntity.getUserId(), reviewEntity.getProductId());
-    }
-
-    public ReviewResp update(ReviewsCr reviewsCr) {
+    public ApiResponse<ReviewResp> update(ReviewsCr reviewsCr) {
         ReviewEntity reviewEntity = reviewRepository.findByUserIdAndProductIdAndVisibilityTrue(reviewsCr.getUserId(), reviewsCr.getProductId()).orElseThrow(ItemNotFoundException::new);
 
         reviewEntity.setRating(reviewsCr.getRating());
         reviewEntity.setComment(reviewsCr.getComment());
 
-        return toDto(reviewRepository.save(reviewEntity));
+        return new ApiResponse<>(toDto(reviewRepository.save(reviewEntity)));
+    }
+
+    private ReviewResp toDto(ReviewEntity reviewEntity) {
+        return new ReviewResp(reviewEntity.getRating(), reviewEntity.getComment(), reviewEntity.getUserId(), reviewEntity.getProductId());
     }
 }

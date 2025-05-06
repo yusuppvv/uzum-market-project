@@ -1,5 +1,6 @@
 package com.company.product;
 
+import com.company.component.ApiResponse;
 import com.company.exception.ItemNotFoundException;
 import com.company.product.DTO.ProductCr;
 import com.company.product.DTO.ProductResp;
@@ -18,7 +19,7 @@ import java.util.UUID;
 public class ProductService {
     private final ProductRepository productRepository;
 
-    public ProductResp create(ProductCr productCr) {
+    public ApiResponse<ProductResp> create(ProductCr productCr) {
 
         ProductEntity saved = productRepository.save(ProductEntity
                 .builder()
@@ -29,14 +30,14 @@ public class ProductService {
                 .sellerId(productCr.getSellerId())
                 .build());
 
-        return toDto(saved);
+        return new ApiResponse<>(toDto(saved));
     }
 
-    public ProductResp getById(UUID id) {
-        return toDto(findProductById(id));
+    public ApiResponse<ProductResp> getById(UUID id) {
+        return new ApiResponse<>(toDto(findProductById(id)));
     }
 
-    public Page<ProductResp> getAll(int page, int size) {
+    public ApiResponse<Page<ProductResp>> getAll(int page, int size) {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt"));
         List<ProductResp> list = productRepository.findAllByVisibilityTrue(pageable)
@@ -44,10 +45,10 @@ public class ProductService {
                 .map(this::toDto)
                 .toList();
 
-        return new PageImpl<>(list, pageable, list.size());
+        return new ApiResponse<>(new PageImpl<>(list, pageable, list.size()));
     }
 
-    public ProductResp update(UUID id, ProductUpdate productUpdate) {
+    public ApiResponse<ProductResp> update(UUID id, ProductUpdate productUpdate) {
         ProductEntity productEntity = findProductById(id);
         productEntity.setDescription(productUpdate.getDescription());
         productEntity.setTitle(productUpdate.getTitle());
@@ -55,18 +56,18 @@ public class ProductService {
         productEntity.setCategoryId(productUpdate.getCategoryId());
         productEntity.setSellerId(productUpdate.getSellerId());
 
-        return toDto(productRepository.save(productEntity));
+        return new ApiResponse<>(toDto(productRepository.save(productEntity)));
     }
 
-    public String delete(UUID id) {
+    public ApiResponse<String> delete(UUID id) {
         ProductEntity productEntity = findProductById(id);
         productEntity.setVisibility(false);
 
         productRepository.save(productEntity);
-        return "Deleted";
+        return new ApiResponse<>("Deleted");
     }
 
-    public Page<ProductResp> getAllByCategoryId(UUID categoryId, int page, int size) {
+    public ApiResponse<Page<ProductResp>> getAllByCategoryId(UUID categoryId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt"));
 
         List<ProductResp> list = productRepository.findByCategoryIdAndVisibilityTrue(categoryId , pageable)
@@ -74,10 +75,10 @@ public class ProductService {
                 .map(this::toDto)
                 .toList();
 
-        return new PageImpl<>(list, pageable, list.size());
+        return new ApiResponse<>(new PageImpl<>(list, pageable, list.size()));
     }
 
-    public Page<ProductResp> getAllBySellerId(UUID sellerId, int page, int size) {
+    public ApiResponse<Page<ProductResp>> getAllBySellerId(UUID sellerId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt"));
 
         List<ProductResp> list = productRepository.findBySellerIdAndVisibilityTrue(sellerId , pageable)
@@ -85,7 +86,7 @@ public class ProductService {
                 .map(this::toDto)
                 .toList();
 
-        return new PageImpl<>(list, pageable, list.size());
+        return new ApiResponse<>(new PageImpl<>(list, pageable, list.size()));
     }
 
     private ProductEntity findProductById(UUID id) {
@@ -105,13 +106,13 @@ public class ProductService {
                 .build();
     }
 
-    public Page<ProductResp> getAllByPriceRange(int page, int size) {
+    public ApiResponse<Page<ProductResp>> getAllByPriceRange(int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt"));
         List<ProductResp> list = productRepository.findAllByOrderByPriceAsc(pageable)
                 .stream()
                 .map(this::toDto)
                 .toList();
 
-        return new PageImpl<>(list, pageable, list.size());
+        return new ApiResponse<>(new PageImpl<>(list, pageable, list.size()));
     }
 }

@@ -1,6 +1,7 @@
 package com.company.photo;
 
 
+import com.company.component.ApiResponse;
 import com.company.product.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -19,15 +20,15 @@ public class PhotoController {
     private final PhotoService photoService;
 
     @PostMapping("/upload")
-    public ResponseEntity<PhotoResp> upload(@RequestParam MultipartFile file,
-                                       @RequestParam UUID productId) {
+    public ResponseEntity<ApiResponse<PhotoResp>> upload(@RequestParam MultipartFile file,
+                                                        @RequestParam UUID productId) {
         return ResponseEntity.ok(
                 photoService.upload(file, productId)
         );
     }
 
     @PostMapping("/multi-upload")
-    public ResponseEntity<List<PhotoResp>> multiUpload(@RequestParam("files") MultipartFile [] files,
+    public ResponseEntity<ApiResponse<List<PhotoResp>>> multiUpload(@RequestParam("files") MultipartFile [] files,
                                                        @RequestParam UUID productId) {
         return ResponseEntity.ok(
                 photoService.multiUpload(files, productId)
@@ -36,14 +37,14 @@ public class PhotoController {
     }
 
     @GetMapping("/metadata/{id}")
-    public ResponseEntity<PhotoResp> metadata(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse<PhotoResp>> metadata(@PathVariable UUID id) {
         return ResponseEntity.ok(photoService.metadata(id));
     }
 
 
     //Delete by id
     @DeleteMapping("/delete-by-id/{id}")
-    public ResponseEntity<String> delete(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse<String>> delete(@PathVariable UUID id) {
         return ResponseEntity.ok(photoService.deleteById(id));
     }
     @GetMapping(value = "/{id}",
@@ -55,7 +56,7 @@ public class PhotoController {
     }
 
     @GetMapping("/by-product-id/{productId}")
-    public ResponseEntity<List<PhotoResp>> getPhotoByProductId(@PathVariable UUID productId) {
+    public ResponseEntity<ApiResponse<List<PhotoResp>>> getPhotoByProductId(@PathVariable UUID productId) {
         return ResponseEntity.ok(photoService.getPhotosByProductId(productId));
     }
 

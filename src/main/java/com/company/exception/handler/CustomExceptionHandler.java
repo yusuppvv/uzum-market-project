@@ -1,6 +1,7 @@
 package com.company.exception.handler;
 
 
+import com.company.component.ApiResponse;
 import com.company.exception.AppBadRequestException;
 import com.company.exception.BadRequestException;
 import com.company.exception.ItemNotFoundException;
@@ -50,5 +51,14 @@ public class CustomExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(e.getMessage());
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<?> handlerException(RuntimeException e) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(
+                        new ApiResponse<>(400, e.getMessage(), null)
+                );
     }
 }

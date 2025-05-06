@@ -1,6 +1,6 @@
 package com.company.users;
 
-import com.company.exception.BadRequestException;
+import com.company.component.ApiResponse;
 import com.company.exception.ItemNotFoundException;
 import com.company.users.DTO.UserDto;
 import com.company.users.DTO.UserResp;
@@ -19,11 +19,12 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    public ResponseEntity<?> create(UserDto userDto) {
+    public ApiResponse<UserResp> create(UserDto userDto) {
         Optional<UserEntity> byEmail =
                 userRepository.findByEmail(userDto.getEmail());
         if (byEmail.isPresent()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email already exists");
+            return new ApiResponse<>
+                    (HttpStatus.BAD_REQUEST.value(), "bu gmail ishlatilgan");
         }
 
         UserEntity userEntity= UserEntity
@@ -36,37 +37,40 @@ public class UserService {
 
         UserEntity save = userRepository.save(userEntity);
 
-        return ResponseEntity.ok(UserResp
+        return new ApiResponse<>(UserResp
                 .builder()
-                        .id(userEntity.getId())
-                        .email(save.getEmail())
-                        .fullName(save.getFullName())
+                .id(userEntity.getId())
+                .email(save.getEmail())
+                .fullName(save.getFullName())
                 .build());
     }
 
-    public ResponseEntity<List<UserResp>> getAll() {
-        return ResponseEntity.ok(
-                userRepository.findAll()
-                        .stream()
-                        .map(u -> changeUserResp(u))
-                        .toList()
-        );
+    public ApiResponse<List<UserResp>> getAll() {
+        List<UserResp> list = userRepository.findAll()
+                .stream()
+                .map(u -> toDto(u))
+                .toList();
+        if (list.isEmpty()) {
+            throw new ItemNotFoundException();
+        }
+        else {
+            return new ApiResponse<>(list);
+        }
     }
 
-
-
-    public ResponseEntity<UserResp> getById(UUID id) {
+    public ApiResponse<UserResp> getById(UUID id) {
         UserEntity userEntity = userRepository.findById(id).orElseThrow(ItemNotFoundException::new);
 
-        return ResponseEntity.ok(changeUserResp(userEntity));
+        return new ApiResponse<>(toDto(userEntity));
     }
 
-    public ResponseEntity<?> update(UUID id, UserDto userDto) {
+    public ApiResponse<UserResp> update(UUID id, UserDto userDto) {
         UserEntity userEntity = userRepository.findById(id).orElseThrow(ItemNotFoundException::new);
 
         Optional<UserEntity> byEmail = userRepository.findByEmail(userDto.getEmail());
         if (byEmail.isPresent()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("bu gmail ishlatilgan");
+            return new ApiResponse<>
+                    (404, "bu gmail ishlatilgan");
         }
 
         userEntity.setFullName(userDto.getFullName());
@@ -74,18 +78,17 @@ public class UserService {
 
         UserEntity save = userRepository.save(userEntity);
 
-        return ResponseEntity.ok(changeUserResp(save));
+        return new ApiResponse<>(toDto(save));
     }
 
-    public ResponseEntity<?> delete(UUID id) {
-        userRepository.findById(id).orElseThrow(ItemNotFoundException::new);
-
-        userRepository.deleteById(id);
-
-        return ResponseEntity.ok("Sucsess");
+    public ApiResponse<String> delete(UUID id) {
+        UserEntity userEntity = userRepository.findById(id).orElseThrow(ItemNotFoundException::new);
+        userEntity.setVisibility(false);
+        userRepository.save(userEntity);
+        return new ApiResponse<>("Successfully deleted!");
     }
 
-    private UserResp changeUserResp(UserEntity userEntity) {
+    private UserResp toDto(UserEntity userEntity) {
         return UserResp.builder()
                 .fullName(userEntity.getFullName())
                 .email(userEntity.getEmail())

@@ -1,5 +1,6 @@
 package com.company.product;
 
+import com.company.component.ApiResponse;
 import com.company.product.DTO.ProductCr;
 import com.company.product.DTO.ProductResp;
 import com.company.product.DTO.ProductUpdate;
@@ -23,61 +24,61 @@ public class ProductController {
 
 
     @PostMapping("/create-review")
-    public ResponseEntity<ReviewResp> ReviewCreate(@RequestBody ReviewsCr reviewsCr) {
+    public ResponseEntity<ApiResponse<ReviewResp>> ReviewCreate(@RequestBody ReviewsCr reviewsCr) {
         return ResponseEntity.ok(reviewService.create(reviewsCr));
     }
 
 
     @PutMapping("/update-review")
-    public ResponseEntity<ReviewResp> update(@RequestBody ReviewsCr reviewsCr) {
+    public ResponseEntity<ApiResponse<ReviewResp>> update(@RequestBody ReviewsCr reviewsCr) {
         return ResponseEntity.ok(reviewService.update(reviewsCr));
     }
 
 
     @PostMapping
-    public ResponseEntity<ProductResp> create(@RequestBody ProductCr productCr){
+    public ResponseEntity<ApiResponse<ProductResp>> create(@RequestBody ProductCr productCr){
         return ResponseEntity.ok(productService.create(productCr));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProductResp> getById(@PathVariable UUID id){
+    public ResponseEntity<ApiResponse<ProductResp>> getById(@PathVariable UUID id){
         return ResponseEntity.ok(productService.getById(id));
     }
 
     @GetMapping("/get-all")
-    public ResponseEntity<Page<ProductResp>> getAll(@RequestParam(defaultValue = "0") int page,
+    public ResponseEntity<ApiResponse<Page<ProductResp>>> getAll(@RequestParam(defaultValue = "0") int page,
                                                     @RequestParam(defaultValue = "10") int size){
         return ResponseEntity.ok(productService.getAll(page, size));
     }
 
     @GetMapping("/category/{categoryId}")
-    public ResponseEntity<Page<ProductResp>> getAllByCategoryId(@PathVariable UUID categoryId,
+    public ResponseEntity<ApiResponse<Page<ProductResp>>> getAllByCategoryId(@PathVariable UUID categoryId,
                                                                 @RequestParam(defaultValue = "0") int page,
                                                                 @RequestParam(defaultValue = "10") int size){
         return ResponseEntity.ok(productService.getAllByCategoryId(categoryId, page,size));
     }
 
     @GetMapping("/seller/{sellerId}")
-    public ResponseEntity<Page<ProductResp>> getAllBySellerId(@PathVariable UUID sellerId,
+    public ResponseEntity<ApiResponse<Page<ProductResp>>> getAllBySellerId(@PathVariable UUID sellerId,
                                                                 @RequestParam(defaultValue = "0") int page,
                                                                 @RequestParam(defaultValue = "10") int size){
         return ResponseEntity.ok(productService.getAllBySellerId(sellerId, page,size));
     }
 
     @GetMapping("/price-range")
-    public ResponseEntity<Page<ProductResp>> getAllByPriceRange(@RequestParam(defaultValue = "0") int page,
+    public ResponseEntity<ApiResponse<Page<ProductResp>>> getAllByPriceRange(@RequestParam(defaultValue = "0") int page,
                                                                 @RequestParam(defaultValue = "10") int size){
         return ResponseEntity.ok(productService.getAllByPriceRange(page ,size));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProductResp> update(@PathVariable UUID id, @RequestBody ProductUpdate productUpdate){
+    public ResponseEntity<ApiResponse<ProductResp>> update(@PathVariable UUID id, @RequestBody ProductUpdate productUpdate){
         return ResponseEntity.ok(productService.update(id, productUpdate));
     }
 
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> delete(@PathVariable UUID id){
+    public ResponseEntity<ApiResponse<String>> delete(@PathVariable UUID id){
         return ResponseEntity.ok(productService.delete(id));
     }
 

@@ -1,5 +1,6 @@
 package com.company.photo;
 
+import com.company.component.ApiResponse;
 import com.company.exception.ItemNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,35 +17,35 @@ public class PhotoService {
 
     private final PhotoRepository photoRepository;
 
-    public PhotoResp upload(MultipartFile file, UUID productId) {
+    public ApiResponse<PhotoResp> upload(MultipartFile file, UUID productId) {
+        return new ApiResponse<>(uploadFile(file, productId));
+    }
 
-        PhotoEntity photo = null;
+    private PhotoResp uploadFile(MultipartFile file, UUID productId) {
         try {
-            photo = PhotoEntity.builder()
+            PhotoEntity photo = PhotoEntity.builder()
                     .productId(productId)
                     .data(file.getBytes())
                     .name(file.getOriginalFilename())
                     .build();
+            photoRepository.save(photo);
+            return toDTO(photo);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-        photoRepository.save(photo);
-
-        return toDTO(photo);
     }
 
-    public String deleteById(UUID id) {
+    public ApiResponse<String> deleteById(UUID id) {
         photoRepository.deleteById(id);
-        return "Photo with id: " + id + " deleted successfully";
+        return new ApiResponse<>("Photo with id: " + id + " deleted successfully");
     }
 
-    public PhotoResp metadata(UUID id) {
+    public ApiResponse<PhotoResp> metadata(UUID id) {
         Optional<PhotoEntity> byIdAndVisibilityTrue = photoRepository.findByIdAndVisibilityTrue(id);
         if (byIdAndVisibilityTrue.isPresent()) {
-            return toDTO(byIdAndVisibilityTrue.get());
+            return new ApiResponse<>(toDTO(byIdAndVisibilityTrue.get()));
         }
-        else return null;
+        else return new ApiResponse<>("Photo not found");
     }
 
     private PhotoResp toDTO(PhotoEntity photo) {
@@ -59,24 +60,23 @@ public class PhotoService {
            return photoOptional.get()
                     .getData();
         }
-            throw new ItemNotFoundException();
+        throw new ItemNotFoundException();
     }
 
-    public List<PhotoResp> getPhotosByProductId(UUID productId) {
+    public ApiResponse<List<PhotoResp>> getPhotosByProductId(UUID productId) {
         Optional<List<PhotoEntity>> byProductIdAndVisibilityTrue = photoRepository.findByProductIdAndVisibilityTrue(productId);
         if (byProductIdAndVisibilityTrue.isPresent()) {
             List<PhotoEntity> photoEntities = byProductIdAndVisibilityTrue.get();
-            return photoEntities.stream()
-                    .map(this::toDTO)
-                    .collect(toList());
+            List<PhotoResp> list = photoEntities.stream().map(this::toDTO).toList();
+            return new ApiResponse<>(list);
         }
         else throw new ItemNotFoundException();
     }
 
-    public List<PhotoResp> multiUpload(MultipartFile[] files, UUID productId) {
-        return Arrays.stream(files)
-                .map(file -> upload(file, productId))
-                .collect(toList());
+    public ApiResponse<List<PhotoResp>> multiUpload(MultipartFile[] files, UUID productId) {
+        return new ApiResponse<>(Arrays.stream(files)
+                .map(file -> uploadFile(file, productId))
+                .toList());
 //
 //        List<PhotoResp> photoResps = new ArrayList<>();
 //

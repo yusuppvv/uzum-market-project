@@ -1,5 +1,6 @@
 package com.company.users;
 
+import com.company.component.ApiResponse;
 import com.company.users.DTO.UserDto;
 import com.company.users.DTO.UserResp;
 import lombok.RequiredArgsConstructor;
@@ -17,27 +18,27 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/create")
-    public ResponseEntity<?> create(@RequestBody UserDto userDto) {
-        return userService.create(userDto);
+    public ResponseEntity<ApiResponse<UserResp>> create(@RequestBody UserDto userDto) {
+        return ResponseEntity.ok(userService.create(userDto));
     }
 
     @GetMapping("/get-all")
-    public ResponseEntity<List<UserResp>> getAll() {
-        return userService.getAll();
+    public ResponseEntity<ApiResponse<List<UserResp>>> getAll() {
+        return ResponseEntity.ok(userService.getAll());
     }
 
     @GetMapping("/get-by/{id}")
-    public ResponseEntity<UserResp> getById(@PathVariable UUID id) {
-        return userService.getById(id);
+    public ResponseEntity<ApiResponse<UserResp>> getById(@PathVariable UUID id) {
+        return ResponseEntity.ok(userService.getById(id));
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<?> update(@PathVariable UUID id,@RequestBody UserDto userDto) {
-        return userService.update(id, userDto);
+    public ResponseEntity<ApiResponse<UserResp>> update(@PathVariable UUID id,@RequestBody UserDto userDto) {
+        return ResponseEntity.ok(userService.update(id, userDto));
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> delete(@PathVariable UUID id) {
-        return userService.delete(id);
+    public ResponseEntity<ApiResponse<String>> delete(@PathVariable UUID id) {
+        return ResponseEntity.ok(userService.delete(id));
     }
 }
