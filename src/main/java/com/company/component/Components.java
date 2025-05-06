@@ -3,6 +3,6 @@ package com.company.component;
 public interface Components {
 
     String DELETED = "Successfully deleted";
-    String CREATED_AT = "created_at";
+    String CREATED_AT = "createdAt";
     String ALREADY_EXISTS = "This item Already exists!!";
 }

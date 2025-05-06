@@ -18,6 +18,7 @@ import java.util.UUID;
 public class DeliveryEntity extends BaseMapper {
     private String address;
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Status status;
 
     @ManyToOne(fetch = FetchType.LAZY)
