@@ -4,15 +4,14 @@ import com.company.component.ApiResponse;
 import com.company.product.DTO.ProductCr;
 import com.company.product.DTO.ProductResp;
 import com.company.product.DTO.ProductUpdate;
-import com.company.review.DTO.ReviewResp;
-import com.company.review.DTO.ReviewsCr;
 import com.company.review.ReviewService;
+import com.company.review.dto.ReviewResp;
+import com.company.review.dto.ReviewsCr;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController

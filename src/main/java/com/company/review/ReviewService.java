@@ -4,8 +4,8 @@ import com.company.component.ApiResponse;
 import com.company.component.Companents;
 import com.company.exception.BadRequestException;
 import com.company.exception.ItemNotFoundException;
-import com.company.review.DTO.ReviewsCr;
-import com.company.review.DTO.ReviewResp;
+import com.company.review.dto.ReviewsCr;
+import com.company.review.dto.ReviewResp;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
