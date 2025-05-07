@@ -1,5 +1,6 @@
 package com.company.orders.DTO;
 
+import com.company.component.Components;
 import com.company.orders.Status;
 import com.company.orders.Type;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -16,10 +17,10 @@ import java.util.UUID;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class OrdersCr {
-    @NotBlank(message = "userId must not blank!!!")
-    @NotNull(message = "userId must not null!!!")
+    @NotBlank(message = Components.NOT_BLANK)
+    @NotNull(message = Components.NOT_NULL)
     private UUID userId;
-    @NotBlank(message = "cartIds must not blank!!!")
-    @NotNull(message = "cartIds must not null!!!")
+    @NotBlank(message = Components.NOT_BLANK)
+    @NotNull(message = Components.NOT_NULL)
     private List<UUID> cartIds;
 }

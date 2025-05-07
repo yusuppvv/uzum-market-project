@@ -1,5 +1,6 @@
 package com.company.users.DTO;
 
+import com.company.component.Components;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -16,10 +17,10 @@ import lombok.NoArgsConstructor;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserCreationDto {
 
-    @NotBlank(message = "fullName must not blank!!!")
-    @NotNull(message = "fullName must not null!!!")
+    @NotBlank(message = Components.NOT_BLANK)
+    @NotNull(message = Components.NOT_NULL)
     private String fullName;
 
-    @Email(message = "Email Must be in Pattern!!!")
+    @Email(message = Components.EMAIL)
     private String email;
 }

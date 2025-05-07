@@ -2,6 +2,7 @@ package com.company.review.dto;
 
 
 
+import com.company.component.Components;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -14,20 +15,20 @@ import java.util.UUID;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ReviewsCr {
 
-    @NotBlank(message = "rating must not blank!!!")
-    @NotNull(message = "rating must not null!!!")
+    @NotBlank(message = Components.NOT_BLANK)
+    @NotNull(message = Components.NOT_NULL)
     private Integer rating;
 
-    @NotBlank(message = "comment must not blank!!!")
-    @NotNull(message = "comment must not null!!!")
+    @NotBlank(message = Components.NOT_BLANK)
+    @NotNull(message = Components.NOT_NULL)
     private   String comment;
 
-    @NotBlank(message = "productId must not blank!!!")
-    @NotNull(message = "productId must not null!!!")
+    @NotBlank(message = Components.NOT_BLANK)
+    @NotNull(message = Components.NOT_NULL)
     private UUID productId;
 
-    @NotBlank(message = "userId must not blank!!!")
-    @NotNull(message = "userId must not null!!!")
+    @NotBlank(message = Components.NOT_BLANK)
+    @NotNull(message = Components.NOT_NULL)
     private UUID userId;
 
 }
