@@ -32,33 +32,11 @@ public class ProductEntity extends BaseMapper {
     @Column(nullable = false, columnDefinition = "float4 default 0.0")
     private float rating = 0.0f;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "seller_id",
-            insertable = false,
-            updatable = false)
-    private UserEntity user;
-
     @Column(name = "seller_id" , nullable = false)
     private UUID sellerId;
-
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id",
-            insertable = false,
-            updatable = false)
-    private CategoryEntity category;
-
 
     @Column(name = "category_id", nullable = false)
     private UUID categoryId;
 
-    @OneToMany(mappedBy = "product")
-    private List<PhotoEntity> photos;
-
-    @OneToOne(mappedBy = "product")
-    private CartEntity cart;
-
-    @OneToMany(mappedBy = "product")
-    private List<ReviewEntity> reviews;
 
 }

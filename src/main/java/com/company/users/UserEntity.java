@@ -36,18 +36,4 @@ public class UserEntity extends BaseMapper {
     private Role role;
 
 
-    @OneToMany(mappedBy = "user")
-    private List<DeliveryEntity> delivery;
-
-    @OneToMany(mappedBy = "user")
-    private List<OrdersEntity> orders;
-
-    @OneToMany(mappedBy = "user")
-    private List<ProductEntity> products;
-
-    @OneToMany(mappedBy = "user")
-    private List<CartEntity> carts;
-
-    @OneToMany(mappedBy = "user")
-    private List<ReviewEntity> reviews;
 }

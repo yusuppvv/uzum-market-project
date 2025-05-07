@@ -21,11 +21,6 @@ public class DeliveryEntity extends BaseMapper {
     @Column(nullable = false)
     private Status status;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id",
-            insertable = false,
-            updatable = false)
-    private UserEntity user;
 
     @Column(name = "user_id")
     private UUID userId;

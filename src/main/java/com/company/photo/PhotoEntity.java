@@ -21,11 +21,6 @@ public class PhotoEntity extends BaseMapper {
     @Column
     private String name;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id",
-            insertable = false,
-            updatable = false)
-    private ProductEntity product;
 
     @Column(name = "product_id")
     private UUID productId;
