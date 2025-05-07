@@ -6,8 +6,8 @@ Content-Type: application/json
   "title": "iPhone 15 pro",
   "description": "Apple phone",
   "price": 1000,
-  "sellerId": "f0059075-e2f4-4722-868e-88bd25474fe3",
-  "categoryId": "71ae8e8a-2f58-4706-9799-2beb598b3319"
+  "sellerId": "e2c401d0-b187-4044-9f18-92ec9474600f",
+  "categoryId": "f3c521ce-8e46-4af8-b0e5-97719bed469c"
 }
 
 ### Post a new product
