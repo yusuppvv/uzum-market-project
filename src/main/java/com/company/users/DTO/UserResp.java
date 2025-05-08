@@ -17,4 +17,9 @@ public class UserResp {
     private UUID id;
     private String fullName;
     private String email;
+
+    public UserResp(String email, String fullName) {
+        this.email = email;
+        this.fullName = fullName;
+    }
 }

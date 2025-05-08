@@ -7,9 +7,11 @@ import com.company.product.DTO.ProductUpdate;
 import com.company.review.ReviewService;
 import com.company.review.dto.ReviewResp;
 import com.company.review.dto.ReviewsCr;
+import jakarta.annotation.security.PermitAll;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -23,34 +25,40 @@ public class ProductController {
 
 
     @PostMapping("/create-review")
+    @PermitAll
     public ResponseEntity<ApiResponse<ReviewResp>> ReviewCreate(@RequestBody ReviewsCr reviewsCr) {
         return ResponseEntity.ok(reviewService.create(reviewsCr));
     }
 
 
     @PutMapping("/update-review")
+    @PermitAll
     public ResponseEntity<ApiResponse<ReviewResp>> update(@RequestBody ReviewsCr reviewsCr) {
         return ResponseEntity.ok(reviewService.update(reviewsCr));
     }
 
 
     @PostMapping
+    @PreAuthorize("hasRole('SELLER')")
     public ResponseEntity<ApiResponse<ProductResp>> create(@RequestBody ProductCr productCr){
         return ResponseEntity.ok(productService.create(productCr));
     }
 
     @GetMapping("/{id}")
+    @PermitAll
     public ResponseEntity<ApiResponse<ProductResp>> getById(@PathVariable UUID id){
         return ResponseEntity.ok(productService.getById(id));
     }
 
     @GetMapping("/get-all")
+    @PermitAll
     public ResponseEntity<ApiResponse<Page<ProductResp>>> getAll(@RequestParam(defaultValue = "0") int page,
                                                     @RequestParam(defaultValue = "10") int size){
         return ResponseEntity.ok(productService.getAll(page, size));
     }
 
     @GetMapping("/category/{categoryId}")
+    @PermitAll
     public ResponseEntity<ApiResponse<Page<ProductResp>>> getAllByCategoryId(@PathVariable UUID categoryId,
                                                                 @RequestParam(defaultValue = "0") int page,
                                                                 @RequestParam(defaultValue = "10") int size){
@@ -58,6 +66,7 @@ public class ProductController {
     }
 
     @GetMapping("/seller/{sellerId}")
+    @PermitAll
     public ResponseEntity<ApiResponse<Page<ProductResp>>> getAllBySellerId(@PathVariable UUID sellerId,
                                                                 @RequestParam(defaultValue = "0") int page,
                                                                 @RequestParam(defaultValue = "10") int size){
@@ -65,18 +74,21 @@ public class ProductController {
     }
 
     @GetMapping("/price-range")
+    @PermitAll
     public ResponseEntity<ApiResponse<Page<ProductResp>>> getAllByPriceRange(@RequestParam(defaultValue = "0") int page,
                                                                 @RequestParam(defaultValue = "10") int size){
         return ResponseEntity.ok(productService.getAllByPriceRange(page ,size));
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('SELLER')")
     public ResponseEntity<ApiResponse<ProductResp>> update(@PathVariable UUID id, @RequestBody ProductUpdate productUpdate){
         return ResponseEntity.ok(productService.update(id, productUpdate));
     }
 
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('SELLER')")
     public ResponseEntity<ApiResponse<String>> delete(@PathVariable UUID id){
         return ResponseEntity.ok(productService.delete(id));
     }
