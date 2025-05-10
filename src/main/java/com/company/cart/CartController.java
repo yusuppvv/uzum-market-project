@@ -24,7 +24,7 @@ public class CartController {
         return ResponseEntity.ok(cartService.create(cartCr));
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/get-by-id/{id}")
     @PermitAll
     public ResponseEntity<ApiResponse<CartResp>> getById(@PathVariable UUID id) {
         return ResponseEntity.ok(cartService.getById(id));
@@ -51,7 +51,7 @@ public class CartController {
         return ResponseEntity.ok(cartService.update(id, cartCr));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     @PermitAll
     public ResponseEntity<ApiResponse<String>> delete(@PathVariable UUID id) {
         return ResponseEntity.ok(cartService.delete(id));

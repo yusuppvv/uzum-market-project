@@ -52,7 +52,7 @@ public class PhotoController {
         return ResponseEntity.ok(photoService.deleteById(id));
     }
 
-    @GetMapping(value = "/{id}",
+    @GetMapping(value = "/get-photo-by-id/{id}",
     produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE})
     @PreAuthorize("hasRole('SELLER')")
     public ResponseEntity<byte[]> getById(@PathVariable UUID id) {
@@ -61,7 +61,7 @@ public class PhotoController {
         );
     }
 
-    @GetMapping("/by-product-id/{productId}")
+    @GetMapping("/get-by-product-id/{productId}")
     @PermitAll
     public ResponseEntity<ApiResponse<List<PhotoResp>>> getPhotoByProductId(@PathVariable UUID productId) {
         return ResponseEntity.ok(photoService.getPhotosByProductId(productId));

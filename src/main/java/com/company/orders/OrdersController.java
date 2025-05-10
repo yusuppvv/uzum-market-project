@@ -27,7 +27,7 @@ public class OrdersController {
         return ResponseEntity.ok(ordersService.create(ordersCr));
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/get-by-id/{id}")
     @PermitAll
     public ResponseEntity<ApiResponse<OrdersResp>> getById(@PathVariable UUID id) {
         return ResponseEntity.ok(ordersService.getById(id));
@@ -62,7 +62,7 @@ public class OrdersController {
         return ResponseEntity.ok(ordersService.update(id, type));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
     public ResponseEntity<ApiResponse<String>> delete(@PathVariable UUID id) {
         return ResponseEntity.ok(ordersService.delete(id));

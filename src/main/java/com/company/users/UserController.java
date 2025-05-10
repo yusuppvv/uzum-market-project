@@ -31,7 +31,7 @@ public class UserController {
         return ResponseEntity.ok(userService.getAll());
     }
 
-    @GetMapping("/get-by/{id}")
+    @GetMapping("/get-by-id/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
     public ResponseEntity<ApiResponse<UserResp>> getById(@PathVariable UUID id) {
         return ResponseEntity.ok(userService.getById(id));

@@ -21,30 +21,14 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ProductController {
     private final ProductService productService;
-    private final ReviewService reviewService;
 
-
-    @PostMapping("/create-review")
-    @PermitAll
-    public ResponseEntity<ApiResponse<ReviewResp>> ReviewCreate(@RequestBody ReviewsCr reviewsCr) {
-        return ResponseEntity.ok(reviewService.create(reviewsCr));
-    }
-
-
-    @PutMapping("/update-review")
-    @PermitAll
-    public ResponseEntity<ApiResponse<ReviewResp>> update(@RequestBody ReviewsCr reviewsCr) {
-        return ResponseEntity.ok(reviewService.update(reviewsCr));
-    }
-
-
-    @PostMapping
+    @PostMapping("/create-product")
     @PreAuthorize("hasRole('SELLER')")
     public ResponseEntity<ApiResponse<ProductResp>> create(@RequestBody ProductCr productCr){
         return ResponseEntity.ok(productService.create(productCr));
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/get-by-id/{id}")
     @PermitAll
     public ResponseEntity<ApiResponse<ProductResp>> getById(@PathVariable UUID id){
         return ResponseEntity.ok(productService.getById(id));
@@ -80,15 +64,15 @@ public class ProductController {
         return ResponseEntity.ok(productService.getAllByPriceRange(page ,size));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     @PreAuthorize("hasRole('SELLER')")
     public ResponseEntity<ApiResponse<ProductResp>> update(@PathVariable UUID id, @RequestBody ProductUpdate productUpdate){
         return ResponseEntity.ok(productService.update(id, productUpdate));
     }
 
 
-    @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('SELLER')")
+    @DeleteMapping("/delete/{id}")
+    @PreAuthorize("hasAnyRole('SELLER', 'ADMIN', 'MODERATOR')")
     public ResponseEntity<ApiResponse<String>> delete(@PathVariable UUID id){
         return ResponseEntity.ok(productService.delete(id));
     }

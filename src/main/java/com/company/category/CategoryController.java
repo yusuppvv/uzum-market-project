@@ -25,13 +25,13 @@ public class CategoryController {
         return categoryService.create(categoryCr);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/get-by-id/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
     public ResponseEntity<ApiResponse<CategoryResp>> getById(@PathVariable UUID id) {
         return categoryService.getById(id);
     }
 
-    @GetMapping
+    @GetMapping("/get-all")
     @PermitAll
     public ResponseEntity<ApiResponse<Page<CategoryResp>>> getAll(@RequestParam(defaultValue = "0") int page,
                                                      @RequestParam(defaultValue = "10") int size) {
@@ -44,7 +44,7 @@ public class CategoryController {
         return categoryService.update(id , categoryCr);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete /{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
     public ResponseEntity<ApiResponse<String>> delete(@PathVariable UUID id) {
         return categoryService.delete(id);

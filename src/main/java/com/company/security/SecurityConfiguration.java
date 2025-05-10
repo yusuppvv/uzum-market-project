@@ -39,15 +39,67 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(auth ->
                 {
-                    auth.requestMatchers("/api/v1/auth/**").permitAll()
-                            .requestMatchers(HttpMethod.POST, "/api/products").hasAuthority("ROLE_ADMIN")
-                            .requestMatchers(HttpMethod.POST, "/api/products").hasAuthority("ROLE_ADMIN")
-                            .requestMatchers(HttpMethod.GET, "/api/products").permitAll()
-                            .requestMatchers(HttpMethod.GET, "/api/products/get/*").permitAll()
-                            .requestMatchers(HttpMethod.DELETE, "/api/products/delete/*").hasAuthority("ROLE_ADMIN")
-                            .requestMatchers(HttpMethod.PUT, "/api/products/update/*").hasAuthority("ROLE_ADMIN")
+                    auth
+                            //Cart controller
+                            .requestMatchers(HttpMethod.POST, "/api/v1/cart").permitAll()
+                            .requestMatchers(HttpMethod.GET, "/api/v1/cart/get-by-id/*").permitAll()
+                            .requestMatchers(HttpMethod.GET, "/api/v1/cart/get-all").permitAll()
+                            .requestMatchers(HttpMethod.GET, "/api/v1/cart/get-by-user/*").hasAnyAuthority("ROLE_ADMIN", "ROLE_MODERATOR")
+                            .requestMatchers(HttpMethod.PUT, "/api/v1/cart/*").permitAll()
+                            .requestMatchers(HttpMethod.DELETE, "/api/v1/cart/delete/*").permitAll()
+
+                            //Category controller
+                            .requestMatchers(HttpMethod.POST, "/api/v1/category").hasAnyAuthority("ROLE_ADMIN", "ROLE_MODERATOR")
+                            .requestMatchers(HttpMethod.GET, "/api/v1/category/get-by-id/*").hasAnyAuthority("ROLE_ADMIN", "ROLE_MODERATOR")
+                            .requestMatchers(HttpMethod.GET, "/api/v1/category/get-all").permitAll()
+                            .requestMatchers(HttpMethod.PUT, "/api/v1/category/*").hasAnyAuthority("ROLE_ADMIN", "ROLE_MODERATOR")
+                            .requestMatchers(HttpMethod.DELETE, "/api/v1/category/delete/*").hasAnyAuthority("ROLE_ADMIN", "ROLE_MODERATOR")
+
+                            //Order controller
+                            .requestMatchers(HttpMethod.POST, "/api/v1/orders").permitAll()
+                            .requestMatchers(HttpMethod.GET, "/api/v1/orders/get-by-id/*").permitAll()
+                            .requestMatchers(HttpMethod.GET, "/api/v1/orders/get-all").permitAll()
+                            .requestMatchers(HttpMethod.GET, "/api/v1/orders/get-by-user/*").hasAnyAuthority("ROLE_ADMIN", "ROLE_MODERATOR")
+                            .requestMatchers(HttpMethod.PATCH, "/api/v1/orders/pay").permitAll()
+                            .requestMatchers(HttpMethod.PUT, "/api/v1/orders/*").permitAll()
+                            .requestMatchers(HttpMethod.DELETE, "/api/v1/orders/delete/*").hasAnyAuthority("ROLE_ADMIN", "ROLE_MODERATOR")
+
+                            //Photo controller
+                            .requestMatchers(HttpMethod.POST, "/api/v1/photo/upload").hasAuthority("ROLE_SELLER")
+                            .requestMatchers(HttpMethod.POST, "/api/v1/photo/multi-upload").hasAuthority("ROLE_SELLER")
+                            .requestMatchers(HttpMethod.GET, "/api/v1/photo/metadata/*").hasAuthority("ROLE_SELLER")
+                            .requestMatchers(HttpMethod.DELETE, "/api/v1/photo/delete-by-id/*").hasAuthority("ROLE_SELLER")
+                            .requestMatchers(HttpMethod.GET, "/api/v1/photo/get-photo-by-id/*").hasAuthority("ROLE_SELLER")
+                            .requestMatchers(HttpMethod.GET, "/api/v1/photo/get-by-product-id/*").permitAll()
+                            .requestMatchers(HttpMethod.GET, "/api/v1/photo/search").permitAll()
+
+                            //Product controller
+                            .requestMatchers(HttpMethod.POST, "/api/v1/product/create-product").hasAuthority("ROLE_SELLER")
+                            .requestMatchers(HttpMethod.GET, "/api/v1/product/get-by-id/*").permitAll()
+                            .requestMatchers(HttpMethod.GET, "/api/v1/product/get-all").permitAll()
+                            .requestMatchers(HttpMethod.GET, "/api/v1/product/category/*").permitAll()
+                            .requestMatchers(HttpMethod.GET, "/api/v1/product/seller/*").permitAll()
+                            .requestMatchers(HttpMethod.GET, "/api/v1/product/price-range").permitAll()
+                            .requestMatchers(HttpMethod.PUT, "/api/v1/product/update/*").hasAuthority("ROLE_SELLER")
+                            .requestMatchers(HttpMethod.DELETE, "/api/v1/product/delete/*").hasAnyAuthority("ROLE_SELLER", "ROLE_ADMIN", "ROLE_MODERATOR")
+
+                            //Review controller
+                            .requestMatchers(HttpMethod.POST, "/api/v1/reviews/create").permitAll()
+                            .requestMatchers(HttpMethod.GET, "/api/v1/reviews/get-by-id/*").permitAll()
+                            .requestMatchers(HttpMethod.GET, "/api/v1/reviews/product/*").permitAll()
+                            .requestMatchers(HttpMethod.GET, "/api/v1/reviews/user/*").permitAll()
+                            .requestMatchers(HttpMethod.PUT, "/api/v1/reviews/update").permitAll()
+                            .requestMatchers(HttpMethod.DELETE, "/api/v1/reviews/delete/*").permitAll()
+
+                            //User controller
+                            .requestMatchers(HttpMethod.POST, "/api/v1/user/create").permitAll()
+                            .requestMatchers(HttpMethod.GET, "/api/v1/user/get-all").hasAnyAuthority("ROLE_ADMIN", "ROLE_MODERATOR")
+                            .requestMatchers(HttpMethod.GET, "/api/v1/user/get-by-id/*").hasAnyAuthority("ROLE_ADMIN", "ROLE_MODERATOR")
+                            .requestMatchers(HttpMethod.PUT, "/api/v1/user/update/*").hasAnyAuthority("ROLE_ADMIN", "ROLE_MODERATOR")
+                            .requestMatchers(HttpMethod.DELETE, "/api/v1/user/delete/*").hasAnyAuthority("ROLE_ADMIN", "ROLE_MODERATOR")
+
                             .anyRequest()
-                            .authenticated();
+                    .authenticated();
                 })
                 .formLogin(AbstractHttpConfigurer::disable)
 //                .httpBasic(Customizer.withDefaults())
