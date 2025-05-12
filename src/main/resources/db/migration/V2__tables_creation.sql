@@ -5,9 +5,10 @@ create table users (
                        updated_at timestamp(6),
                        id         uuid not null primary key,
                        email      varchar(255) not null unique,
+                       password   varchar(255) not null,
                        full_name  varchar(255) not null,
                        role       varchar(255) not null,
-                       status     varchar(255) not null
+                       status     varchar(255) not null default 'ACTIVE'
 );
 
 -- 2. Category table (referenced by Product)

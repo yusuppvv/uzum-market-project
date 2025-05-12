@@ -24,15 +24,16 @@ public class UserEntity extends BaseMapper implements UserDetails {
     @Column(unique = true, nullable = false)
     private String email;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "default 'ACTIVE'")
     @Enumerated(value = EnumType.STRING)
     private Status status;
 
-    @Column(nullable = false )
+    @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private Role role;
 
-
+    @Column(nullable = false)
+    private String password;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

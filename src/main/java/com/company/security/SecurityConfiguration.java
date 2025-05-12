@@ -98,6 +98,10 @@ public class SecurityConfiguration {
                             .requestMatchers(HttpMethod.PUT, "/api/v1/user/update/*").hasAnyAuthority("ROLE_ADMIN", "ROLE_MODERATOR")
                             .requestMatchers(HttpMethod.DELETE, "/api/v1/user/delete/*").hasAnyAuthority("ROLE_ADMIN", "ROLE_MODERATOR")
 
+                            //Auth
+                            .requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
+                            .requestMatchers(HttpMethod.POST, "/api/v1/auth/register").permitAll()
+                            .requestMatchers(HttpMethod.POST, "/api/v1/auth/verification").permitAll()
                             .anyRequest()
                     .authenticated();
                 })
