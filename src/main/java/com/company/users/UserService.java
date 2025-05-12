@@ -3,6 +3,7 @@ package com.company.users;
 import com.company.component.ApiResponse;
 import com.company.component.Components;
 import com.company.exception.classes.ItemNotFoundException;
+import com.company.security.jwtUtil;
 import com.company.users.DTO.UserDto;
 import com.company.users.DTO.UserResp;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ import java.util.UUID;
 public class UserService {
 
     private final UserRepository userRepository;
+
 
     public ApiResponse<UserResp> create(UserDto userDto) {
         Optional<UserEntity> byEmail =
@@ -42,6 +44,7 @@ public class UserService {
                 .id(userEntity.getId())
                 .email(save.getEmail())
                 .fullName(save.getFullName())
+                .token(jwtUtil.encode(userEntity.getUsername(), userEntity.getRole()))
                 .build());
     }
 
@@ -75,7 +78,6 @@ public class UserService {
 
         userEntity.setFullName(userDto.getFullName());
         userEntity.setEmail(userDto.getEmail());
-
         UserEntity save = userRepository.save(userEntity);
 
         return new ApiResponse<>(toDto(save));
@@ -93,6 +95,7 @@ public class UserService {
                 .fullName(userEntity.getFullName())
                 .email(userEntity.getEmail())
                 .id(userEntity.getId())
+                .token(jwtUtil.encode(userEntity.getUsername(), userEntity.getRole()))
                 .build();
     }
 }

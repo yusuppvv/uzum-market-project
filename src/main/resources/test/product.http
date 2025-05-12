@@ -1,5 +1,6 @@
 ### Post a new product
 POST localhost:8080/api/v1/product
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBeml6Iiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NDY4NjI3NDIsImV4cCI6MTc0Njk0OTE0Mn0.hXpdBHvPnjlyjwlkwziPJP82YcQCh1Gyco7Ib5uzTPQ
 Content-Type: application/json
 
 {

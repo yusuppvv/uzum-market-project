@@ -1,16 +1,8 @@
 package com.company.users;
 
-import com.company.cart.CartEntity;
 import com.company.component.BaseMapper;
-import com.company.delivery.DeliveryEntity;
-import com.company.orders.OrdersEntity;
-import com.company.product.ProductEntity;
-import com.company.review.ReviewEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -38,6 +31,7 @@ public class UserEntity extends BaseMapper implements UserDetails {
     @Column(nullable = false )
     @Enumerated(value = EnumType.STRING)
     private Role role;
+
 
 
     @Override
