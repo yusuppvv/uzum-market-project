@@ -81,6 +81,15 @@ create table review (
                         comment    varchar(255) not null
 );
 
+-- 8. Verification table
+create table verification
+(
+    id         uuid         not null primary key default gen_random_uuid(),
+    email      varchar(255) not null,
+    code       int          not null,
+    visibility boolean                           default true
+);
+
 -- Users constraints
 alter table users
     add constraint users_role_check check (role in ('ADMIN', 'MODERATOR', 'USER', 'SELLER')),

@@ -4,6 +4,8 @@ import com.company.auth.dto.AuthCreation;
 import com.company.auth.dto.AuthLogin;
 import com.company.auth.dto.AuthResponse;
 import com.company.auth.dto.AuthVerification;
+import com.company.auth.verfication.VerificationEntity;
+import com.company.auth.verfication.VerificationRepository;
 import com.company.component.ApiResponse;
 import com.company.component.Components;
 import com.company.component.smpt.SmptService;
@@ -13,7 +15,10 @@ import com.company.users.Role;
 import com.company.users.Status;
 import com.company.users.UserEntity;
 import com.company.users.UserRepository;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -25,73 +30,92 @@ public class AuthService {
     private final UserRepository userRepository;
     private final SmptService smsService;
     private final BCryptPasswordEncoder passwordEncoder;
-    private Map<String, AuthCreation> authCreationMap = new HashMap<>();
-    private Map<String, Integer> verificationCodes = new HashMap<>();
+    private final Map<String, AuthCreation> authCreationMap = new HashMap<>();
+    private final VerificationRepository verificationCodes;
+    @Bean
+    public BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
     public ApiResponse<AuthResponse> register(AuthCreation authCreation) {
         Optional<UserEntity> optionalUser = userRepository.findByEmailAndVisibilityTrue(authCreation.getEmail());
         if (optionalUser.isPresent()) {
             return new ApiResponse<>(404, "User already exists");
         }
-        else {
-            int i = (int) ((Math.random() * 900000) + 100000);
-            Sms sms = new Sms();
-            sms.setTo(authCreation.getEmail());
-            sms.setSubject("Verification Code");
-            sms.setText(Components.SMS_1 + authCreation.getFullName() + Components.SMS_2 + i);
-            Boolean isSuccessfull = smsService.sendSms(sms);
-            if (isSuccessfull) {
-                verificationCodes.put(authCreation.getEmail(), i);
-                authCreationMap.put(authCreation.getEmail(), authCreation);
-                return new ApiResponse<>(200, Components.SMS_SUCCESSFULL);
-            } else {
-                return new ApiResponse<>(500, "Error occurred while sending verification code");
-            }
+        try {
+            int i = (int) (Math.random() * 900000) + 100000;
+            smsService.sendSms(buildSms(authCreation.getEmail(), "Verificate your email" , Components.SMS_1 + authCreation.getFullName() + Components.SMS_2 + i));
+            verificationCodes.save(VerificationEntity.builder()
+                    .email(authCreation.getEmail())
+                    .code(i)
+                    .visibility(true)
+                    .build());
+            authCreationMap.put(authCreation.getEmail(), authCreation);
+            return new ApiResponse<>(200, "Verification code sent to your email successfully. To verify your email, please check the website below:\n http://localhost:8080/api/v1/auth/verify");
+        } catch (Exception e) {
+            return new ApiResponse<>(404, "Error sending verification code");
         }
     }
 
     public ApiResponse<AuthResponse> verification(AuthVerification authVerification) {
-        Integer i = verificationCodes.get(authVerification.getEmail());
-        if (i == null) {
-            return new ApiResponse<>(404, "Verification code not found");
+        Optional<VerificationEntity> optional = verificationCodes.findByEmailAndVisibilityTrue(authVerification.getEmail());
+        if (optional.isPresent()) {
+            if (optional.get().getCode() == authVerification.getCode()) {
+                String password = authCreationMap.get(authVerification.getEmail()).getPassword();
+                if (password.isEmpty()) {
+                    return new ApiResponse<>(404, "Password is empty");
+                }
+                UserEntity user = UserEntity.builder()
+                        .fullName(authCreationMap.get(authVerification.getEmail()).getFullName())
+                        .email(authVerification.getEmail())
+                        .password(passwordEncoder.encode(password))
+                        .role(Role.USER)
+                        .status(Status.ACTIVE)
+                        .build();
+                System.out.println("user = " + user);
+                AuthResponse authResponse = AuthResponse.builder()
+                        .email(authVerification.getEmail())
+                        .token(jwtUtil.encode(authVerification.getEmail(), user.getRole()))
+                        .build();
+                authCreationMap.remove(authVerification.getEmail());
+                optional.get().setVisibility(false);
+                userRepository.save(user);
+                return new ApiResponse<>(200, "User registered successfully", authResponse);
+            }
+            else {
+                return new ApiResponse<>(404, "Verification code is not correct");
+            }
         }
-        if (i == authVerification.getCode()) {
-            AuthCreation authCreation = authCreationMap.get(authVerification.getEmail());
-            UserEntity userEntity = UserEntity
-                    .builder()
-                    .email(authVerification.getEmail())
-                    .role(Role.USER)
-                    .password(passwordEncoder.encode(authCreation.getPassword()))
-                    .status(Status.ACTIVE)
-                    .fullName(authCreation.getFullName())
-                    .build();
-            userRepository.save(userEntity);
-            verificationCodes.remove(authVerification.getEmail());
-            authCreationMap.remove(authVerification.getEmail());
-            return new ApiResponse<>(200, Components.VERIFICATION_SUCCESS);
-        }
-        else {
-            return new ApiResponse<>(404, "Verification code or email is incorrect");
-        }
+        return new ApiResponse<>(404, "Verification code is not correct");
     }
 
     public ApiResponse<AuthResponse> login(AuthLogin authLogin) {
-        Optional<UserEntity> optionalUser = userRepository.findByEmailAndVisibilityTrue(authLogin.getEmail());
-        if (optionalUser.isPresent()) {
-            UserEntity userEntity = optionalUser.get();
-            System.out.println("userEntity.getPassword() = " + userEntity.getPassword());
-            if (userEntity.getEmail().equals(authLogin.getEmail())
-                    &&
-                    passwordEncoder.matches(authLogin.getPassword(), userEntity.getPassword())) {
-                AuthResponse authResponse = new AuthResponse();
-                authResponse.setEmail(authLogin.getEmail());
-                authResponse.setToken(jwtUtil.encode(authResponse.getEmail(), userEntity.getRole()));
-                return new ApiResponse<>(200, "Successfully logged in", authResponse);
+        Optional<UserEntity> optional = userRepository.findByEmailAndVisibilityTrue(authLogin.getEmail());
+        if (optional.isPresent()) {
+            String password = optional.get().getPassword();
+            System.out.println("password = " + password);
+            System.out.println("passwordEncoder.matches(authLogin.getPassword(), optional.get().getPassword()) = " + passwordEncoder.matches(authLogin.getPassword(), optional.get().getPassword()));
+            if (passwordEncoder.matches(authLogin.getPassword(), password)) {
+                AuthResponse authResponse = AuthResponse.builder()
+                        .email(authLogin.getEmail())
+                        .token(jwtUtil.encode(authLogin.getEmail(), optional.get().getRole()))
+                        .build();
+                return new ApiResponse<>(200, "User logged in successfully", authResponse);
             }
             else {
-                return new ApiResponse<>(404, "Password or email is incorrect.");
+                return new ApiResponse<>(404, "Password is not correct");
             }
         }
-        else return new ApiResponse<>(404, "Password or email is incorrect.");
+        else {
+            return new ApiResponse<>(404, "User not found");
+        }
+    }
+
+    private Sms buildSms(String email, String subject, String text) {
+        return Sms.builder()
+                .text(text)
+                .subject(subject)
+                .to(email)
+                .build();
     }
 }

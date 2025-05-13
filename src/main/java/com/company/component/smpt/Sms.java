@@ -1,5 +1,12 @@
 package com.company.component.smpt;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Sms {
     private String to;
     private String text;
